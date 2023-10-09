@@ -1,12 +1,6 @@
-<br/>
+# OP Wagmi
 
-<p align="center">
-  <h1>OP Wagmi</h1>
-</p>
-
-<p align="center">
-  Wagmi hooks for OP Stack Chains
-<p>
+Wagmi hooks for OP Stack Chains
 
 <!-- Badge row 1 - status -->
 
