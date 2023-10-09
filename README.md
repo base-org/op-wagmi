@@ -23,8 +23,6 @@ Wagmi hooks for OP Stack Chains
 [![GitHub pull requests by-label](https://img.shields.io/github/issues-pr-raw/base-org/op-wagmi)](https://github.com/base-org/op-wagmi/pulls)
 [![GitHub Issues](https://img.shields.io/github/issues-raw/base-org/op-wagmi.svg)](https://github.com/base-org/op-wagmi/issues)
 
-<br>
-
 ## Features
 
 - Simplifies cross L1 & L2 interactions
