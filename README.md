@@ -40,6 +40,7 @@ If you're interested in contributing, please read the [contributing docs](CONTRI
 ## Authors
 
 - [@zencephalon](https://github.com/zencephalon) (zencephalon.eth, [Twitter](https://twitter.com/zencephalon))
+- [@lukasrosario](https://github.com/lukasrosario) (lsr.eth, [Twitter](https://twitter.com/0xlsr))
 
 ## License
 
