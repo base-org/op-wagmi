@@ -27,7 +27,7 @@ export type UseSimulateOPActionBaseParameters<
       chainId,
       selectData
     >,
-    'abi' | 'functionName' | 'args' | 'query'
+    'abi' | 'functionName' | 'args' | 'query' | 'address'
   >
   & {
     query?: { enabled?: boolean }
