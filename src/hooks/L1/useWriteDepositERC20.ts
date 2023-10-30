@@ -36,6 +36,11 @@ async function writeMutation(
   return writeDepositERC20(walletClient, { ...params, account: walletClient.account.address, chain: undefined })
 }
 
+/**
+ * Deposits ERC20 tokens to L2 using the standard bridge
+ * @param parameters - {@link UseWriteDepositERC20Parameters}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositERC20ReturnType}
+ */
 export function useWriteDepositERC20<config extends Config = ResolvedRegister['config'], context = unknown>(
   { mutation: mutationOverride }: UseWriteDepositERC20Parameters<config, context> = {},
 ): UseWriteDepositERC20ReturnType<config, context> {

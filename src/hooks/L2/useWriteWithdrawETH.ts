@@ -40,6 +40,11 @@ async function writeMutation(
   return writeWithdrawETH(walletClient, { ...params, account: walletClient.account.address, chain: undefined })
 }
 
+/**
+ * Withdraws ETH to an L1 address.
+ * @param parameters - {@link UseWriteWithdrawETHParameters}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteWithdrawETHReturnType}
+ */
 export function useWriteWithdrawETH<config extends Config = ResolvedRegister['config'], context = unknown>(
   { mutation: mutationOverride }: UseWriteWithdrawETHParameters<config, context> = {},
 ): UseWriteWithdrawETHReturnType<config, context> {

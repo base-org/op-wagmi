@@ -24,6 +24,11 @@ export type UseSimulateWithdrawERC20ReturnType<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
+/**
+ * Simulates a withdrawal of ERC20 tokens to an L1 address.
+ * @param parameters - {@link UseSimulateWithdrawERC20Parameters}
+ * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateWithdrawERC20ReturnType}
+ */
 export function useSimulateWithdrawERC20<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,

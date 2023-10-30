@@ -24,6 +24,11 @@ export type UseSimulateDepositERC20ReturnType<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
+/**
+ * Simulates a deposit of ERC20 tokens to L2
+ * @param parameters - {@link UseSimulateDepositERC20Parameters}
+ * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateDepositERC20ReturnType}
+ */
 export function useSimulateDepositERC20<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,

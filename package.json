@@ -80,9 +80,9 @@
     "typecheck": "tsc --noEmit",
     "bench": "vitest bench",
     "bench:ci": "CI=true vitest bench",
-    "dev:docs": "pnpm -r --filter site dev",
-    "prepare": "npx simple-git-hooks",
-    "dev:example": "pnpm -r --filter example dev"
+    "dev:docs": "pnpm -r --filter docs dev",
+    "dev:example": "pnpm -r --filter example dev",
+    "prepare": "npx simple-git-hooks"
   },
   "dependencies": {
     "@eth-optimism/contracts-ts": "^0.15.0"

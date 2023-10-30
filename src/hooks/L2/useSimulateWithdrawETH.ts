@@ -24,6 +24,11 @@ export type UseSimulateWithdrawETHReturnType<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
+/**
+ * Simulates a withdrawal of ETH to an L1 address.
+ * @param parameters - {@link UseSimulateWithdrawETHParameters}
+ * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateWithdrawETHReturnType}
+ */
 export function useSimulateWithdrawETH<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,

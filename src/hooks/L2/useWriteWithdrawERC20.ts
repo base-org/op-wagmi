@@ -40,6 +40,11 @@ async function writeMutation(
   return writeWithdrawERC20(walletClient, { ...params, account: walletClient.account.address, chain: undefined })
 }
 
+/**
+ * Withdraws ERC20 tokens to an L1 address.
+ * @param parameters - {@link UseWriteWithdrawERC20Parameters}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteWithdrawERC20ReturnType}
+ */
 export function useWriteWithdrawERC20<config extends Config = ResolvedRegister['config'], context = unknown>(
   { mutation: mutationOverride }: UseWriteWithdrawERC20Parameters<config, context> = {},
 ): UseWriteWithdrawERC20ReturnType<config, context> {

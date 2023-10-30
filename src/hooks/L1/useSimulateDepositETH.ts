@@ -24,6 +24,11 @@ export type UseSimulateDepositETHReturnType<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
+/**
+ * Simulates a deposit of ETH to L2
+ * @param parameters - {@link UseSimulateDepositETHParameters}
+ * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateDepositETHReturnType}
+ */
 export function useSimulateDepositETH<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,

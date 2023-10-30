@@ -36,6 +36,11 @@ async function writeMutation(
   return writeDepositETH(walletClient, { ...params, account: walletClient.account.address, chain: undefined })
 }
 
+/**
+ * Deposits ETH to L2 using the OptimismPortal contract
+ * @param parameters - {@link UseWriteDepositETHParameters}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositETHReturnType}
+ */
 export function useWriteDepositETH<config extends Config = ResolvedRegister['config'], context = unknown>(
   { mutation: mutationOverride }: UseWriteDepositETHParameters<config, context> = {},
 ): UseWriteDepositETHReturnType<config, context> {
