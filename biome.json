@@ -14,7 +14,8 @@
       "tsconfig.*.json",
       "generated.ts",
       "pnpm-lock.yaml",
-      "bench"
+      "bench",
+      "**/.next/*"
     ]
   },
   "linter": {

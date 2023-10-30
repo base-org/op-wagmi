@@ -9,7 +9,8 @@
   },
   "excludes": [
     "**/node_modules",
-    "**/*-lock.json"
+    "**/*-lock.json",
+    "**/.next/*"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.87.1.wasm",

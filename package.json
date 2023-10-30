@@ -1,0 +1,115 @@
+{
+  "name": "op-wagmi",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "typings": "./dist/types/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo",
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.test-d.ts",
+    "!src/**/*.bench.ts",
+    "!src/_test/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/types/hooks/index.d.ts",
+      "import": "./dist/esm/hooks/index.js",
+      "default": "./dist/cjs/hooks/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "hooks": [
+        "./dist/types/hooks/index.d.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.0.0",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2",
+    "@eth-optimism/core-utils": "^0.12.3",
+    "@eth-optimism/sdk": "^3.1.2",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "@types/use-sync-external-store": "^0.0.3",
+    "@viem/anvil": "^0.0.6",
+    "@vitest/coverage-v8": "^0.34.2",
+    "@wagmi/cli": "alpha",
+    "dprint": "^0.40.2",
+    "ethers": "^5.7.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "rimraf": "^5.0.1",
+    "simple-git-hooks": "^2.9.0",
+    "typescript": "5.0.4",
+    "vitest": "^0.34.1",
+    "wagmi": "alpha"
+  },
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
+    "build:cjs": "tsc --project tsconfig.build.json --module commonjs --outDir ./dist/cjs --removeComments --verbatimModuleSyntax false && echo > ./dist/cjs/package.json '{\"type\":\"commonjs\"}'",
+    "build:esm": "tsc --project tsconfig.build.json --module es2015 --outDir ./dist/esm && echo > ./dist/esm/package.json '{\"type\":\"module\",\"sideEffects\":false}'",
+    "build:types": "tsc --project tsconfig.build.json --module esnext --declarationDir ./dist/types --emitDeclarationOnly --declaration",
+    "release:check": "changeset status --verbose --since=origin/main",
+    "release:publish": "pnpm install && pnpm build && changeset publish",
+    "release:version": "changeset version && pnpm install --lockfile-only",
+    "clean": "rimraf dist",
+    "format": "dprint fmt",
+    "format:check": "dprint check",
+    "lint": "biome check .",
+    "lint:fix": "pnpm lint --apply",
+    "preinstall": "npx only-allow pnpm",
+    "test": "vitest dev",
+    "test:cov": "vitest dev --coverage",
+    "test:ci": "CI=true vitest --coverage",
+    "test:typecheck": "SKIP_GLOBAL_SETUP=true vitest typecheck",
+    "test:ui": "vitest dev --ui",
+    "typecheck": "tsc --noEmit",
+    "bench": "vitest bench",
+    "bench:ci": "CI=true vitest bench",
+    "dev:docs": "pnpm -r --filter site dev",
+    "prepare": "npx simple-git-hooks",
+    "dev:example": "pnpm -r --filter example dev"
+  },
+  "dependencies": {
+    "@eth-optimism/contracts-ts": "^0.15.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.4",
+    "viem": "2.0.0-alpha.17",
+    "wagmi": "alpha",
+    "@wagmi/core": "alpha",
+    "@tanstack/react-query": "beta",
+    "op-viem": "0.1.0-alpha-alpha.3",
+    "@tanstack/query-core": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm format && pnpm lint:fix"
+  },
+  "pnpm": {
+    "overrides": {
+      "test-op-wagmi": "workspace:*"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
