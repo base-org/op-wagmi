@@ -1,5 +1,5 @@
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { useSimulateWithdrawERC20, useWriteWithdrawERC20 } from 'op-wagmi'
+import { useSimulateDepositERC20, useWriteDepositERC20 } from 'op-wagmi'
 import { useState } from 'react'
 import { Address, erc20Abi, isAddress, parseUnits } from 'viem'
 import { useReadContract } from 'wagmi'
@@ -8,50 +8,57 @@ import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 import { Modal } from './Modal'
 
+const l1StandardBridge = '0xfA6D8Ee5BE770F84FC001D098C4bD604Fe01284a'
+const cbETHL1 = '0xD0bb78d0B337aA6D3A0530DD2e58560bf00851f1'
 const cbETHL2 = '0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2'
 
-type WithdrawERC20ModalProps = {
+type DepositERC20ModalProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
+function DepositERC20Modal({ isOpen, onClose }: DepositERC20ModalProps) {
+  const [l1Token, setL1Token] = useState(cbETHL1)
   const [l2Token, setL2Token] = useState(cbETHL2)
   const [to, setTo] = useState('')
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState<Action>('simulate')
   const { data: tokenDecimals } = useReadContract({
-    address: l2Token as Address,
+    address: l1Token as Address,
     abi: erc20Abi,
     functionName: 'decimals',
-    chainId: 84531,
-    query: { enabled: isAddress(l2Token) },
+    chainId: 5,
+    query: { enabled: isAddress(l1Token) },
   })
-  const { status: simulateStatus, refetch: simulateWithdrawERC20 } = useSimulateWithdrawERC20({
+  const { status: simulateStatus, refetch: simulateDepositERC20 } = useSimulateDepositERC20({
     args: {
-      l2Token: cbETHL2,
+      l1Token: l1Token as Address,
+      l2Token: l2Token as Address,
       to: to as Address,
-      amount: tokenDecimals ? parseUnits(amount, tokenDecimals) : BigInt(0),
+      amount: parseUnits(amount, tokenDecimals ?? 18),
       minGasLimit: 100000,
     },
-    chainId: 84531,
+    l1StandardBridge,
+    chainId: 5,
     query: { enabled: false },
   })
-  const { data, status: writeStatus, writeWithdrawERC20Async } = useWriteWithdrawERC20()
+  const { data, status: writeStatus, writeDepositERC20Async } = useWriteDepositERC20()
 
   const handleClick = async () => {
     if (action === 'simulate') {
-      simulateWithdrawERC20()
+      simulateDepositERC20()
     } else {
       try {
-        await writeWithdrawERC20Async({
+        await writeDepositERC20Async({
           args: {
-            l2Token: cbETHL2,
+            l1Token: l1Token as Address,
+            l2Token: l2Token as Address,
             to: to as Address,
-            amount: tokenDecimals ? parseUnits(amount, tokenDecimals) : BigInt(0),
+            amount: BigInt(1),
             minGasLimit: 100000,
           },
-          chainId: 84531,
+          l1StandardBridge,
+          chainId: 5,
         })
       } catch (e) {
         console.error(e)
@@ -62,8 +69,14 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className='flex flex-col space-y-8 pb-8'>
-        <span className='text-2xl font-bold text-white'>Withdraw ERC20</span>
+        <span className='text-2xl font-bold text-white'>Deposit ERC20</span>
         <div className='flex flex-col w-full px-16 space-y-4'>
+          <InputGroup
+            label='L1 Token:'
+            placeholder='0x...'
+            value={l1Token}
+            setValue={setL1Token}
+          />
           <InputGroup
             label='L2 Token:'
             placeholder='0x...'
@@ -75,7 +88,7 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
           <ActionToggle action={action} setAction={setAction} />
           <div className='self-center'>
             <Button onClick={handleClick}>
-              {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Withdraw ERC20 🚀`}
+              {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Deposit ERC20 🚀`}
             </Button>
           </div>
         </div>
@@ -100,7 +113,7 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
                   className='text-blue-500 underline'
                   target='_blank'
                   rel='noreferrer'
-                  href={`https://goerli.basescan.org/tx/${data}`}
+                  href={`https://goerli.etherscan.io/tx/${data}`}
                 >
                   {`${data?.slice(0, 8)}...`}
                 </a>
@@ -113,16 +126,16 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
   )
 }
 
-export function WithdrawERC20() {
+export function DepositERC20() {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <div>
-      {isOpen && <WithdrawERC20Modal isOpen={isOpen} onClose={onClose} />}
+      {isOpen && <DepositERC20Modal isOpen={isOpen} onClose={onClose} />}
       <Button
         onClick={onOpen}
       >
-        Withdraw ERC20
+        Deposit ERC20
       </Button>
     </div>
   )

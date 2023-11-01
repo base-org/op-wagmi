@@ -1,54 +1,41 @@
 import { useDisclosure } from '@/hooks/useDisclosure'
-import { useSimulateWithdrawERC20, useWriteWithdrawERC20 } from 'op-wagmi'
+import { useSimulateWithdrawETH, useWriteWithdrawETH } from 'op-wagmi'
 import { useState } from 'react'
-import { Address, erc20Abi, isAddress, parseUnits } from 'viem'
-import { useReadContract } from 'wagmi'
+import { Address, parseEther } from 'viem'
 import { Action, ActionToggle } from './ActionToggle'
 import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 import { Modal } from './Modal'
 
-const cbETHL2 = '0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2'
-
-type WithdrawERC20ModalProps = {
+type WithdrawETHModalProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
-  const [l2Token, setL2Token] = useState(cbETHL2)
+function WithdrawETHModal({ isOpen, onClose }: WithdrawETHModalProps) {
   const [to, setTo] = useState('')
   const [amount, setAmount] = useState('')
   const [action, setAction] = useState<Action>('simulate')
-  const { data: tokenDecimals } = useReadContract({
-    address: l2Token as Address,
-    abi: erc20Abi,
-    functionName: 'decimals',
-    chainId: 84531,
-    query: { enabled: isAddress(l2Token) },
-  })
-  const { status: simulateStatus, refetch: simulateWithdrawERC20 } = useSimulateWithdrawERC20({
+  const { status: simulateStatus, refetch: simulateWithdrawETH } = useSimulateWithdrawETH({
     args: {
-      l2Token: cbETHL2,
       to: to as Address,
-      amount: tokenDecimals ? parseUnits(amount, tokenDecimals) : BigInt(0),
+      amount: parseEther(amount),
       minGasLimit: 100000,
     },
     chainId: 84531,
     query: { enabled: false },
   })
-  const { data, status: writeStatus, writeWithdrawERC20Async } = useWriteWithdrawERC20()
+  const { data, status: writeStatus, writeWithdrawETHAsync } = useWriteWithdrawETH()
 
   const handleClick = async () => {
     if (action === 'simulate') {
-      simulateWithdrawERC20()
+      simulateWithdrawETH()
     } else {
       try {
-        await writeWithdrawERC20Async({
+        await writeWithdrawETHAsync({
           args: {
-            l2Token: cbETHL2,
             to: to as Address,
-            amount: tokenDecimals ? parseUnits(amount, tokenDecimals) : BigInt(0),
+            amount: parseEther(amount),
             minGasLimit: 100000,
           },
           chainId: 84531,
@@ -62,20 +49,14 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className='flex flex-col space-y-8 pb-8'>
-        <span className='text-2xl font-bold text-white'>Withdraw ERC20</span>
+        <span className='text-2xl font-bold text-white'>Withdraw ETH</span>
         <div className='flex flex-col w-full px-16 space-y-4'>
-          <InputGroup
-            label='L2 Token:'
-            placeholder='0x...'
-            value={l2Token}
-            setValue={setL2Token}
-          />
           <InputGroup label='To' placeholder='0x...' value={to} setValue={setTo} />
           <InputGroup label='Amount' value={amount} setValue={setAmount} />
           <ActionToggle action={action} setAction={setAction} />
           <div className='self-center'>
             <Button onClick={handleClick}>
-              {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Withdraw ERC20 🚀`}
+              {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Withdraw ETH 🚀`}
             </Button>
           </div>
         </div>
@@ -113,16 +94,16 @@ function WithdrawERC20Modal({ isOpen, onClose }: WithdrawERC20ModalProps) {
   )
 }
 
-export function WithdrawERC20() {
+export function WithdrawETH() {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <div>
-      {isOpen && <WithdrawERC20Modal isOpen={isOpen} onClose={onClose} />}
+      {isOpen && <WithdrawETHModal isOpen={isOpen} onClose={onClose} />}
       <Button
         onClick={onOpen}
       >
-        Withdraw ERC20
+        Withdraw ETH
       </Button>
     </div>
   )
