@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { type Config, getChainId, getPublicClient, getWalletClient, type ResolvedRegister } from '@wagmi/core'
+import { type Config, getPublicClient, getWalletClient, type ResolvedRegister } from '@wagmi/core'
 import {
   simulateDepositERC20,
   writeDepositERC20,
@@ -25,12 +25,8 @@ async function writeMutation(
   config: UseConfigReturnType,
   { chainId, ...params }: WriteDepositERC20Parameters,
 ) {
-  const currentChainId = getChainId(config)
-  if (currentChainId !== chainId) throw new Error('chain mismatch')
-
-  const walletClient = await getWalletClient(config)
-  if (!walletClient) throw new Error('no account connected')
-  const publicClient = await getPublicClient(config)
+  const walletClient = await getWalletClient(config, { chainId })
+  const publicClient = getPublicClient(config, { chainId })
 
   await simulateDepositERC20(publicClient, { ...params, account: walletClient.account.address, chain: undefined })
   return writeDepositERC20(walletClient, { ...params, account: walletClient.account.address, chain: undefined })
