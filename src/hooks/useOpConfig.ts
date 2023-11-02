@@ -17,6 +17,6 @@ export function useOpConfig<config extends OpConfig>(
   const config = parameters.config ?? useConfig(parameters)
 
   // TODO: Return a better error here
-  if (!config) throw new Error()
+  if (!config) throw new Error('No Wagmi Context provider found')
   return config as UseConfigReturnType<config>
 }

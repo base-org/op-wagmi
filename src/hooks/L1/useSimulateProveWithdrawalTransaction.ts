@@ -9,6 +9,8 @@ import { useAccount, useChainId, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
+import { useOpConfig } from '../useOpConfig.js'
+// import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
 const ABI = l2StandardBridgeABI
 const FUNCTION = 'withdrawTo'
@@ -35,15 +37,26 @@ export type UseProveWithdrawalTransactionReturnType<
  * @param parameters - {@link UseProveWithdrawalTransactionParameters}
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseProveWithdrawalTransactionReturnType}
  */
-export function useProveWithdrawalTransaction<
+export async function useProveWithdrawalTransaction<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, query: queryOverride, ...rest }: UseProveWithdrawalTransactionParameters<config, chainId>,
-): UseProveWithdrawalTransactionReturnType<config, chainId> {
+): Promise<UseProveWithdrawalTransactionReturnType<config, chainId>> {
+  const opConfig = useOpConfig()
   const account = useAccount()
   const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId: rest.chainId ?? chainId })
+  const l2Chain = opConfig.l2chains[args.l2ChainId]
+
+  if (!l2Chain) {
+    throw new Error('L2 chain not configured')
+  }
+
+  const publicClient = usePublicClient({ chainId: l2Chain.l1ChaindId })
+
+  const _latestL2Block = await getLatestProposedL2BlockNumber(publicClient, {
+    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle,
+  })
 
   const query = {
     async queryFn() {

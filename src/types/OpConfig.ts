@@ -12,10 +12,11 @@ export type Addresses<chainId = number> = {
 }
 
 export type L2Chain<l1ChainId extends number> = {
+  chainId: number
   l1ChaindId: l1ChainId
   l1Addresses: Addresses<l1ChainId>
 }
 
 export type OpConfig = Config & {
-  readonly l2chains: L2Chain<number>[]
+  readonly l2chains: Record<number, L2Chain<number>>
 }
