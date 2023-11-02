@@ -3,7 +3,8 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
 import type { Config, ResolvedRegister } from '@wagmi/core'
-import { simulateProveWithdrawalTransaction, type SimulateProveWithdrawalTransactionParameters } from 'op-viem/actions'
+import { simulateProveWithdrawalTransaction } from 'op-viem/actions'
+import type { Hash } from 'viem'
 import { useAccount, useChainId, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
@@ -17,7 +18,12 @@ export type UseProveWithdrawalTransactionParameters<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  & ProveWithdrawalTransactionParameters
+  & {
+    args: {
+      l1WithdrawalTxHash: Hash
+      l2ChainId: number
+    }
+  }
 
 export type UseProveWithdrawalTransactionReturnType<
   config extends Config = ResolvedRegister['config'],
@@ -41,7 +47,8 @@ export function useProveWithdrawalTransaction<
 
   const query = {
     async queryFn() {
-      return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
+      // return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
+      return simulateProveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
     },
     queryKey: simulateContractQueryKey({
       ...{

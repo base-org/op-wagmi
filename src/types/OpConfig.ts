@@ -1,5 +1,5 @@
-import type { Address } from "viem";
-import { type Config } from "wagmi";
+import type { Address } from 'viem'
+import { type Config } from 'wagmi'
 
 // TODO: export these from op-viem and import here
 export type ContractAddress<chainId = number> = { address: Address; chainId: chainId; blockCreated?: number }
@@ -12,10 +12,10 @@ export type Addresses<chainId = number> = {
 }
 
 export type L2Chain<l1ChainId extends number> = {
-  l1ChaindId: l1ChainId;
-  l1Addresses: Addresses<l1ChainId>;
+  l1ChaindId: l1ChainId
+  l1Addresses: Addresses<l1ChainId>
 }
 
 export type OpConfig = Config & {
-  readonly l2chains : L2Chain<number>[];
+  readonly l2chains: L2Chain<number>[]
 }
