@@ -1,0 +1,28 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: Typecheck
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Setup"
+        uses: ./.github/actions/setup
+
+      - name: Run typechecker
+        run: pnpm typecheck
+
+      - name: Run typechecker on tests
+        run: pnpm test:typecheck

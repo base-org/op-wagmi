@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: Tests
+
+jobs:
+  check:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Setup"
+        uses: ./.github/actions/setup
+
+      - name: Run tests
+        run: pnpm test:cov
+      
+      # Adds coverage to github pr
+      - name: 'Report Coverage'
+        if: always() # Also generate the report if tests are failing
+        uses:  davelosert/vitest-coverage-report-action@v2
+        with:
+          name: "op-wagmi"
+          working-directory: "."
