@@ -18,6 +18,11 @@ type DepositERC20ModalProps = {
 }
 
 function DepositERC20Modal({ isOpen, onClose }: DepositERC20ModalProps) {
+  // Just a note: we could get the l2 token from the l1 token if it's an OP token
+  // This is an API we could definitely consider adding to op-viem and op-wagmi
+  // Could look something like this:
+  // const {data: {l1TokenAddress, bridgeAddress}} = useGetTokenInfo({l2TokenAddress})
+  // Seems not high priority though
   const [l1Token, setL1Token] = useState(cbETHL1)
   const [l2Token, setL2Token] = useState(cbETHL2)
   const [to, setTo] = useState('')
