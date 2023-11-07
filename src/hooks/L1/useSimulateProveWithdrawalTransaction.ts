@@ -51,9 +51,9 @@ export function useProveWithdrawalTransaction<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
-  { args, query: queryOverride }: UseProveWithdrawalTransactionParameters<config, chainId>,
+  { args, query: queryOverride, config }: UseProveWithdrawalTransactionParameters<config, chainId>,
 ): UseSimulateContractReturnType {
-  const opConfig = useOpConfig()
+  const opConfig = useOpConfig({ config })
   const l2Chain = opConfig.l2chains[args.l2ChainId]
 
   if (!l2Chain) {
