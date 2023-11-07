@@ -3,13 +3,15 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
 import type { Config, ResolvedRegister } from '@wagmi/core'
-import { simulateProveWithdrawalTransaction } from 'op-viem/actions'
+import { simulateProveWithdrawalTransaction, getLatestProposedL2BlockNumber, getOutputForL2Block } from 'op-viem/actions'
 import type { Hash } from 'viem'
-import { useAccount, useChainId, usePublicClient } from 'wagmi'
+import { useAccount, useChainId, usePublicClient, useWaitForTransactionReceipt } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
 import { useOpConfig } from '../useOpConfig.js'
+import { getWithdrawalMessage } from '../../util/getWithdrawalMessage.js'
+import { useMemo } from 'react'
 // import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
 const ABI = l2StandardBridgeABI
@@ -54,29 +56,58 @@ export async function useProveWithdrawalTransaction<
 
   const publicClient = usePublicClient({ chainId: l2Chain.l1ChaindId })
 
-  const _latestL2Block = await getLatestProposedL2BlockNumber(publicClient, {
+  const { l2BlockNumber: blockNumberOfLatestL2OutputProposal } = await getLatestProposedL2BlockNumber(publicClient, {
     l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle,
   })
+  const { outputIndex: withdrawalOutputIndex } = await getOutputForL2Block(publicClient, {
+    l2BlockNumber: blockNumberOfLatestL2OutputProposal,
+    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle
+  })
 
-  const query = {
-    async queryFn() {
-      // return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
-      return simulateProveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
-    },
-    queryKey: simulateContractQueryKey({
-      ...{
-        ...rest,
-        ...queryOverride,
-        gasPrice: undefined,
-        blockNumber: undefined,
-        type: undefined,
-        value: undefined,
-        ...args,
+  const { data: withdrawalReceipt } = useWaitForTransactionReceipt({
+    hash: args.l1WithdrawalTxHash,
+    chainId: l2Chain.chainId,
+  });
+
+  const withdrawalMessage = useMemo(() => {
+    if (!withdrawalReceipt) {
+      return undefined
+    }
+    return getWithdrawalMessage(withdrawalReceipt, l2Chain.l2Addresses.l2L1MessagePasserAddress.address)
+  }, [withdrawalReceipt, l2Chain])
+
+
+
+  const query = useMemo(() => {
+    if (withdrawalMessage === undefined) {
+      return undefined;
+    }
+
+    return {
+      async queryFn() {
+        // return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
+        return simulateProveWithdrawalTransaction(publicClient, { args: {
+          withdrawalTransaction: withdrawalMessage,
+          l2BlockNumber: blockNumberOfLatestL2OutputProposal,
+          L2OutputIndex: withdrawalOutputIndex,
+          withdrawalProof: {}
+        }, account: account.address, ...rest })
       },
-      account: account.address,
-      chainId,
-    }),
-  }
+      queryKey: simulateContractQueryKey({
+        ...{
+          ...rest,
+          ...queryOverride,
+          gasPrice: undefined,
+          blockNumber: undefined,
+          type: undefined,
+          value: undefined,
+          ...args,
+        },
+        account: account.address,
+        chainId,
+      }),
+    }
+  }, [])
 
   const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
   return {
