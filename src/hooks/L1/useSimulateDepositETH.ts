@@ -1,66 +1,35 @@
 'use client'
 
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
-import { useQuery } from '@tanstack/react-query'
-import type { Config, ResolvedRegister } from '@wagmi/core'
-import { simulateDepositETH, type SimulateDepositETHParameters } from 'op-viem/actions'
-import { useAccount, useChainId, usePublicClient } from 'wagmi'
-import { hashFn, simulateContractQueryKey } from 'wagmi/query'
-import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
-import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
+import { type SimulateDepositETHParameters } from 'op-viem/actions'
+import { useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { useOpConfig } from '../useOpConfig.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'depositTransaction'
 
-export type UseSimulateDepositETHParameters<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
-> =
-  & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
+export type UseSimulateDepositETHParameters =
+  & UseSimulateContractParameters
   & SimulateDepositETHParameters
-
-export type UseSimulateDepositETHReturnType<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
-> = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
+  & { l2ChainId: number }
 
 /**
  * Simulates a deposit of ETH to L2
  * @param parameters - {@link UseSimulateDepositETHParameters}
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateDepositETHReturnType}
  */
-export function useSimulateDepositETH<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
->(
-  { args, portal, query: queryOverride, ...rest }: UseSimulateDepositETHParameters<config, chainId>,
-): UseSimulateDepositETHReturnType<config, chainId> {
-  const account = useAccount()
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId: rest.chainId ?? chainId })
+export function useSimulateDepositETH(
+  { args, l2ChainId, ...rest }: UseSimulateDepositETHParameters,
+) {
+  const opConfig = useOpConfig(rest)
+  const l2Chain = opConfig.l2chains[l2ChainId]
 
-  const query = {
-    async queryFn() {
-      return simulateDepositETH(publicClient, { args, portal, account: account.address, ...rest })
-    },
-    queryKey: simulateContractQueryKey({
-      ...{
-        ...rest,
-        ...queryOverride,
-        gasPrice: undefined,
-        blockNumber: undefined,
-        type: undefined,
-        value: undefined,
-        ...args,
-      },
-      account: account.address,
-      chainId,
-    }),
-  }
-
-  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
-  return {
-    ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
-    queryKey: query.queryKey,
-  }
+  return useSimulateContract({
+    address: l2Chain.l1Addresses.l1StandardBridge.address,
+    abi: ABI,
+    functionName: FUNCTION,
+    args: [args.to, args.amount, args.gasLimit, false, args.data || '0x'],
+    chainId: l2Chain.l1ChaindId,
+    ...rest,
+  })
 }

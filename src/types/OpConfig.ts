@@ -13,6 +13,7 @@ export type L1Addresses<chainId = number> = {
 
 export type L2Addresses<chainId = number> = {
   l2L1MessagePasserAddress: ContractAddress<chainId>
+  l2StandardBridge: ContractAddress<chainId>
 }
 
 export type L2Chain<l1ChainId extends number, l2ChainId extends number> = {
