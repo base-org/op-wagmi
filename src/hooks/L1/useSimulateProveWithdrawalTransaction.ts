@@ -1,25 +1,12 @@
 'use client'
 
-import { l2OutputOracleABI, l2StandardBridgeABI, optimismPortalABI } from '@eth-optimism/contracts-ts'
+import { l2StandardBridgeABI, optimismPortalABI } from '@eth-optimism/contracts-ts'
 import type { Config, ResolvedRegister } from '@wagmi/core'
-import { useMemo } from 'react'
-import { type Hash, pad } from 'viem'
-import {
-  useBlock,
-  usePublicClient,
-  useReadContract,
-  useSimulateContract,
-  type UseSimulateContractReturnType,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
-import type { BedrockCrossChainMessageProof } from '../../types/BedrockCrossChainMessageProof.js'
+import { type Hash } from 'viem'
+import { useSimulateContract } from 'wagmi'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
-import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { getMessageSlot } from '../../util/getMessageSlot.js'
-import { useMakeStateTrieProof } from '../../util/getStateTrieProof.js'
-import { getWithdrawalMessage } from '../../util/getWithdrawalMessage.js'
-import { hashWithdrawal } from '../../util/hashWithdrawal.js'
 import { useOpConfig } from '../useOpConfig.js'
+import { useProveWithdrawalArgs } from './useProveWithdrawalArgs.js'
 // import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
 const ABI = l2StandardBridgeABI
@@ -37,11 +24,6 @@ export type UseProveWithdrawalTransactionParameters<
     }
   }
 
-export type UseProveWithdrawalTransactionReturnType<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
-> = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
-
 /**
  * Simulates a proof of ERC20 token withdrawal transaction to an L1 address.
  * @param parameters - {@link UseProveWithdrawalTransactionParameters}
@@ -52,7 +34,7 @@ export function useProveWithdrawalTransaction<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, query: queryOverride, config }: UseProveWithdrawalTransactionParameters<config, chainId>,
-): UseSimulateContractReturnType {
+) {
   const opConfig = useOpConfig({ config })
   const l2Chain = opConfig.l2chains[args.l2ChainId]
 
@@ -60,99 +42,11 @@ export function useProveWithdrawalTransaction<
     throw new Error('L2 chain not configured')
   }
 
-  const l2PublicClient = usePublicClient({ chainId: l2Chain.chainId })
-
-  const { data: blockNumberOfLatestL2OutputProposal } = useReadContract({
-    abi: l2OutputOracleABI,
-    address: l2Chain.l1Addresses.l2OutputOracle.address,
-    functionName: 'latestBlockNumber',
-    args: [],
+  const { withdrawalMessage, withdrawalOutputIndex, bedrockProof } = useProveWithdrawalArgs({
+    l2ChainId: args.l2ChainId,
+    config,
+    l1WithdrawalTxHash: args.l1WithdrawalTxHash,
   })
-
-  const { data: withdrawalOutputIndex } = useReadContract({
-    abi: l2OutputOracleABI,
-    address: l2Chain.l1Addresses.l2OutputOracle.address,
-    functionName: 'getL2OutputIndexAfter',
-    args: [blockNumberOfLatestL2OutputProposal || 0n],
-    query: {
-      enabled: Boolean(blockNumberOfLatestL2OutputProposal),
-    },
-  })
-
-  const { data: proposal } = useReadContract({
-    abi: l2OutputOracleABI,
-    address: l2Chain.l1Addresses.l2OutputOracle.address,
-    functionName: 'getL2Output',
-  })
-
-  const { data: withdrawalReceipt } = useWaitForTransactionReceipt({
-    hash: args.l1WithdrawalTxHash,
-    chainId: l2Chain.chainId,
-  })
-
-  const withdrawalMessage = useMemo(() => {
-    if (!withdrawalReceipt) {
-      return undefined
-    }
-    return getWithdrawalMessage(withdrawalReceipt, l2Chain.l2Addresses.l2L1MessagePasserAddress.address)
-  }, [withdrawalReceipt, l2Chain])
-
-  const messageBedrockOutput = useMemo(() => {
-    if (!proposal || !withdrawalOutputIndex) {
-      return undefined
-    }
-    return {
-      outputRoot: proposal.outputRoot,
-      l1Timestamp: proposal.timestamp,
-      l2BlockNumber: proposal.l2BlockNumber,
-      l2OutputIndex: withdrawalOutputIndex,
-    }
-  }, [withdrawalMessage, proposal, withdrawalOutputIndex])
-
-  const hashedWithdrawal = useMemo(() => {
-    if (withdrawalMessage === undefined) {
-      return undefined
-    }
-    return hashWithdrawal(withdrawalMessage)
-  }, [withdrawalMessage])
-
-  const messageSlot = useMemo(() => {
-    if (!hashedWithdrawal) {
-      return undefined
-    }
-    return getMessageSlot(hashedWithdrawal)
-  }, [hashedWithdrawal])
-
-  const stateTrieProof = useMakeStateTrieProof(
-    l2PublicClient,
-    blockNumberOfLatestL2OutputProposal,
-    l2Chain.l2Addresses.l2L1MessagePasserAddress.address,
-    messageSlot,
-  )
-
-  const { data: block } = useBlock({
-    chainId: l2Chain.chainId,
-    blockNumber: blockNumberOfLatestL2OutputProposal,
-  })
-
-  const bedrockProof = useMemo(() => {
-    if (!withdrawalMessage || !stateTrieProof || !block || !messageBedrockOutput) {
-      return undefined
-    }
-
-    const bedrockProof: BedrockCrossChainMessageProof = {
-      outputRootProof: {
-        version: pad('0x0'),
-        stateRoot: block.stateRoot,
-        messagePasserStorageRoot: stateTrieProof.storageRoot,
-        latestBlockhash: block.hash,
-      },
-      withdrawalProof: stateTrieProof.storageProof,
-      l2OutputIndex: messageBedrockOutput.l2OutputIndex,
-    }
-
-    return bedrockProof
-  }, [withdrawalMessage, blockNumberOfLatestL2OutputProposal, withdrawalOutputIndex])
 
   return useSimulateContract({
     abi: optimismPortalABI,
