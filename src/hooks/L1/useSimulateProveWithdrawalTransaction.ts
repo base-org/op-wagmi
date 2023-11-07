@@ -1,20 +1,24 @@
 'use client'
 
-import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
-import { useQuery } from '@tanstack/react-query'
+import { l2OutputOracleABI, l2StandardBridgeABI, optimismPortalABI } from '@eth-optimism/contracts-ts'
 import type { Config, ResolvedRegister } from '@wagmi/core'
-import {
-  getLatestProposedL2BlockNumber,
-  getOutputForL2Block,
-  simulateProveWithdrawalTransaction,
-} from 'op-viem/actions'
 import { useMemo } from 'react'
-import type { Hash } from 'viem'
-import { useAccount, useChainId, usePublicClient, useWaitForTransactionReceipt } from 'wagmi'
-import { hashFn, simulateContractQueryKey } from 'wagmi/query'
+import { type Hash, pad } from 'viem'
+import {
+  useBlock,
+  usePublicClient,
+  useReadContract,
+  useSimulateContract,
+  type UseSimulateContractReturnType,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import type { BedrockCrossChainMessageProof } from '../../types/BedrockCrossChainMessageProof.js'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
+import { getMessageSlot } from '../../util/getMessageSlot.js'
+import { useMakeStateTrieProof } from '../../util/getStateTrieProof.js'
 import { getWithdrawalMessage } from '../../util/getWithdrawalMessage.js'
+import { hashWithdrawal } from '../../util/hashWithdrawal.js'
 import { useOpConfig } from '../useOpConfig.js'
 // import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
@@ -43,29 +47,42 @@ export type UseProveWithdrawalTransactionReturnType<
  * @param parameters - {@link UseProveWithdrawalTransactionParameters}
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseProveWithdrawalTransactionReturnType}
  */
-export async function useProveWithdrawalTransaction<
+export function useProveWithdrawalTransaction<
   config extends Config = ResolvedRegister['config'],
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
-  { args, query: queryOverride, ...rest }: UseProveWithdrawalTransactionParameters<config, chainId>,
-): Promise<UseProveWithdrawalTransactionReturnType<config, chainId>> {
+  { args, query: queryOverride }: UseProveWithdrawalTransactionParameters<config, chainId>,
+): UseSimulateContractReturnType {
   const opConfig = useOpConfig()
-  const account = useAccount()
-  const chainId = useChainId()
   const l2Chain = opConfig.l2chains[args.l2ChainId]
 
   if (!l2Chain) {
     throw new Error('L2 chain not configured')
   }
 
-  const publicClient = usePublicClient({ chainId: l2Chain.l1ChaindId })
+  const l2PublicClient = usePublicClient({ chainId: l2Chain.chainId })
 
-  const { l2BlockNumber: blockNumberOfLatestL2OutputProposal } = await getLatestProposedL2BlockNumber(publicClient, {
-    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle,
+  const { data: blockNumberOfLatestL2OutputProposal } = useReadContract({
+    abi: l2OutputOracleABI,
+    address: l2Chain.l1Addresses.l2OutputOracle.address,
+    functionName: 'latestBlockNumber',
+    args: [],
   })
-  const { outputIndex: withdrawalOutputIndex } = await getOutputForL2Block(publicClient, {
-    l2BlockNumber: blockNumberOfLatestL2OutputProposal,
-    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle,
+
+  const { data: withdrawalOutputIndex } = useReadContract({
+    abi: l2OutputOracleABI,
+    address: l2Chain.l1Addresses.l2OutputOracle.address,
+    functionName: 'getL2OutputIndexAfter',
+    args: [blockNumberOfLatestL2OutputProposal || 0n],
+    query: {
+      enabled: Boolean(blockNumberOfLatestL2OutputProposal),
+    },
+  })
+
+  const { data: proposal } = useReadContract({
+    abi: l2OutputOracleABI,
+    address: l2Chain.l1Addresses.l2OutputOracle.address,
+    functionName: 'getL2Output',
   })
 
   const { data: withdrawalReceipt } = useWaitForTransactionReceipt({
@@ -80,44 +97,76 @@ export async function useProveWithdrawalTransaction<
     return getWithdrawalMessage(withdrawalReceipt, l2Chain.l2Addresses.l2L1MessagePasserAddress.address)
   }, [withdrawalReceipt, l2Chain])
 
-  const query = useMemo(() => {
+  const messageBedrockOutput = useMemo(() => {
+    if (!proposal || !withdrawalOutputIndex) {
+      return undefined
+    }
+    return {
+      outputRoot: proposal.outputRoot,
+      l1Timestamp: proposal.timestamp,
+      l2BlockNumber: proposal.l2BlockNumber,
+      l2OutputIndex: withdrawalOutputIndex,
+    }
+  }, [withdrawalMessage, proposal, withdrawalOutputIndex])
+
+  const hashedWithdrawal = useMemo(() => {
     if (withdrawalMessage === undefined) {
       return undefined
     }
+    return hashWithdrawal(withdrawalMessage)
+  }, [withdrawalMessage])
 
-    return {
-      async queryFn() {
-        // return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
-        return simulateProveWithdrawalTransaction(publicClient, {
-          args: {
-            withdrawalTransaction: withdrawalMessage,
-            l2BlockNumber: blockNumberOfLatestL2OutputProposal,
-            L2OutputIndex: withdrawalOutputIndex,
-            withdrawalProof: {},
-          },
-          account: account.address,
-          ...rest,
-        })
-      },
-      queryKey: simulateContractQueryKey({
-        ...{
-          ...rest,
-          ...queryOverride,
-          gasPrice: undefined,
-          blockNumber: undefined,
-          type: undefined,
-          value: undefined,
-          ...args,
-        },
-        account: account.address,
-        chainId,
-      }),
+  const messageSlot = useMemo(() => {
+    if (!hashedWithdrawal) {
+      return undefined
     }
-  }, [])
+    return getMessageSlot(hashedWithdrawal)
+  }, [hashedWithdrawal])
 
-  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
-  return {
-    ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
-    queryKey: query.queryKey,
-  }
+  const stateTrieProof = useMakeStateTrieProof(
+    l2PublicClient,
+    blockNumberOfLatestL2OutputProposal,
+    l2Chain.l2Addresses.l2L1MessagePasserAddress.address,
+    messageSlot,
+  )
+
+  const { data: block } = useBlock({
+    chainId: l2Chain.chainId,
+    blockNumber: blockNumberOfLatestL2OutputProposal,
+  })
+
+  const bedrockProof = useMemo(() => {
+    if (!withdrawalMessage || !stateTrieProof || !block || !messageBedrockOutput) {
+      return undefined
+    }
+
+    const bedrockProof: BedrockCrossChainMessageProof = {
+      outputRootProof: {
+        version: pad('0x0'),
+        stateRoot: block.stateRoot,
+        messagePasserStorageRoot: stateTrieProof.storageRoot,
+        latestBlockhash: block.hash,
+      },
+      withdrawalProof: stateTrieProof.storageProof,
+      l2OutputIndex: messageBedrockOutput.l2OutputIndex,
+    }
+
+    return bedrockProof
+  }, [withdrawalMessage, blockNumberOfLatestL2OutputProposal, withdrawalOutputIndex])
+
+  return useSimulateContract({
+    abi: optimismPortalABI,
+    address: l2Chain.l1Addresses.portal.address,
+    functionName: 'proveWithdrawalTransaction',
+    args: !withdrawalMessage || !withdrawalOutputIndex || !bedrockProof ? undefined : [
+      withdrawalMessage,
+      withdrawalOutputIndex,
+      bedrockProof.outputRootProof,
+      bedrockProof.withdrawalProof,
+    ],
+    query: {
+      enabled: Boolean(withdrawalMessage && withdrawalOutputIndex && bedrockProof),
+      ...queryOverride,
+    },
+  })
 }

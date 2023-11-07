@@ -1,5 +1,5 @@
-import { type WithdrawalMessage } from '../types/WithdrawalMessage.js';
-import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem';
+import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem'
+import { type WithdrawalMessage } from '../types/WithdrawalMessage.js'
 
 // Hashes a withdrawal
 export function hashWithdrawal(withdrawalMessage: WithdrawalMessage) {
@@ -12,5 +12,5 @@ export function hashWithdrawal(withdrawalMessage: WithdrawalMessage) {
       withdrawalMessage.gasLimit,
       withdrawalMessage.data,
     ]),
-  );
+  )
 }
