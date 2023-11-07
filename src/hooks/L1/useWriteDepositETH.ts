@@ -15,8 +15,8 @@ export type UseWriteDepositETHParameters<config extends Config = Config, context
  * @param parameters - {@link UseWriteDepositETHParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositETHReturnType}
  */
-export function useWriteDepositETH({ args, l2ChainId }: UseWriteDepositETHParameters) {
-  const config = useOpConfig()
+export function useWriteDepositETH({ args, l2ChainId, ...rest }: UseWriteDepositETHParameters) {
+  const config = useOpConfig(rest)
   const l2Chain = config.l2chains[l2ChainId]
   const { writeContract, writeContractAsync } = useWriteContract()
 
