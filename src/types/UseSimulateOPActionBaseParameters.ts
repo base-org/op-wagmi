@@ -31,4 +31,5 @@ export type UseSimulateOPActionBaseParameters<
   >
   & {
     query?: { enabled?: boolean }
+    config?: config
   }
