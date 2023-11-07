@@ -1,4 +1,4 @@
-import { encodeAbiParameters, keccak256, pad, parseAbiParameters } from "viem";
+import { encodeAbiParameters, keccak256, pad, parseAbiParameters } from 'viem'
 
 export function getMessageSlot(hashedWithdrawal: `0x${string}`) {
   return keccak256(
@@ -6,5 +6,5 @@ export function getMessageSlot(hashedWithdrawal: `0x${string}`) {
       hashedWithdrawal,
       BigInt(pad('0x0')),
     ]),
-  );
+  )
 }
