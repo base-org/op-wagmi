@@ -3,15 +3,19 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
 import type { Config, ResolvedRegister } from '@wagmi/core'
-import { simulateProveWithdrawalTransaction, getLatestProposedL2BlockNumber, getOutputForL2Block } from 'op-viem/actions'
+import {
+  getLatestProposedL2BlockNumber,
+  getOutputForL2Block,
+  simulateProveWithdrawalTransaction,
+} from 'op-viem/actions'
+import { useMemo } from 'react'
 import type { Hash } from 'viem'
 import { useAccount, useChainId, usePublicClient, useWaitForTransactionReceipt } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
 import { getWithdrawalMessage } from '../../util/getWithdrawalMessage.js'
-import { useMemo } from 'react'
+import { useOpConfig } from '../useOpConfig.js'
 // import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
 const ABI = l2StandardBridgeABI
@@ -61,13 +65,13 @@ export async function useProveWithdrawalTransaction<
   })
   const { outputIndex: withdrawalOutputIndex } = await getOutputForL2Block(publicClient, {
     l2BlockNumber: blockNumberOfLatestL2OutputProposal,
-    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle
+    l2OutputOracle: l2Chain.l1Addresses.l2OutputOracle,
   })
 
   const { data: withdrawalReceipt } = useWaitForTransactionReceipt({
     hash: args.l1WithdrawalTxHash,
     chainId: l2Chain.chainId,
-  });
+  })
 
   const withdrawalMessage = useMemo(() => {
     if (!withdrawalReceipt) {
@@ -76,22 +80,24 @@ export async function useProveWithdrawalTransaction<
     return getWithdrawalMessage(withdrawalReceipt, l2Chain.l2Addresses.l2L1MessagePasserAddress.address)
   }, [withdrawalReceipt, l2Chain])
 
-
-
   const query = useMemo(() => {
     if (withdrawalMessage === undefined) {
-      return undefined;
+      return undefined
     }
 
     return {
       async queryFn() {
         // return proveWithdrawalTransaction(publicClient, { args, account: account.address, ...rest })
-        return simulateProveWithdrawalTransaction(publicClient, { args: {
-          withdrawalTransaction: withdrawalMessage,
-          l2BlockNumber: blockNumberOfLatestL2OutputProposal,
-          L2OutputIndex: withdrawalOutputIndex,
-          withdrawalProof: {}
-        }, account: account.address, ...rest })
+        return simulateProveWithdrawalTransaction(publicClient, {
+          args: {
+            withdrawalTransaction: withdrawalMessage,
+            l2BlockNumber: blockNumberOfLatestL2OutputProposal,
+            L2OutputIndex: withdrawalOutputIndex,
+            withdrawalProof: {},
+          },
+          account: account.address,
+          ...rest,
+        })
       },
       queryKey: simulateContractQueryKey({
         ...{
