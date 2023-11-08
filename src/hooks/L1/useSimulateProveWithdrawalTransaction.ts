@@ -1,22 +1,13 @@
 'use client'
 
-import { l2StandardBridgeABI, optimismPortalABI } from '@eth-optimism/contracts-ts'
-import type { Config, ResolvedRegister } from '@wagmi/core'
+import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { type Hash } from 'viem'
-import { useSimulateContract } from 'wagmi'
-import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
+import { useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 import { useOpConfig } from '../useOpConfig.js'
 import { useProveWithdrawalArgs } from './useProveWithdrawalArgs.js'
-// import { getLatestProposedL2BlockNumber } from 'op-viem/actions/L1/getLatestProposedL2BlockNumber'
 
-const ABI = l2StandardBridgeABI
-const FUNCTION = 'withdrawTo'
-
-export type UseProveWithdrawalTransactionParameters<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
-> =
-  & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
+export type UseProveWithdrawalTransactionParameters =
+  & UseSimulateContractParameters
   & {
     args: {
       l1WithdrawalTxHash: Hash
@@ -29,11 +20,8 @@ export type UseProveWithdrawalTransactionParameters<
  * @param parameters - {@link UseProveWithdrawalTransactionParameters}
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseProveWithdrawalTransactionReturnType}
  */
-export function useProveWithdrawalTransaction<
-  config extends Config = ResolvedRegister['config'],
-  chainId extends config['chains'][number]['id'] | undefined = undefined,
->(
-  { args, query: queryOverride, config }: UseProveWithdrawalTransactionParameters<config, chainId>,
+export function useProveWithdrawalTransaction(
+  { args, query: queryOverride, config }: UseProveWithdrawalTransactionParameters,
 ) {
   const opConfig = useOpConfig({ config })
   const l2Chain = opConfig.l2chains[args.l2ChainId]
@@ -44,11 +32,12 @@ export function useProveWithdrawalTransaction<
 
   const { withdrawalMessage, withdrawalOutputIndex, bedrockProof } = useProveWithdrawalArgs({
     l2ChainId: args.l2ChainId,
-    config,
+    config: opConfig,
     l1WithdrawalTxHash: args.l1WithdrawalTxHash,
   })
 
   return useSimulateContract({
+    chainId: l2Chain.l1ChaindId,
     abi: optimismPortalABI,
     address: l2Chain.l1Addresses.portal.address,
     functionName: 'proveWithdrawalTransaction',
