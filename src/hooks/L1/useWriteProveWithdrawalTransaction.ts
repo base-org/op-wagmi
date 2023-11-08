@@ -45,7 +45,7 @@ export function useWriteDepositETH({ args, ...rest }: UseProveWithdrawalTransact
   const ready = Boolean(withdrawalMessage && withdrawalOutputIndex && bedrockProof)
 
   return {
-    writeDepositETH: ready
+    writeProveWithdrawalTransaction: ready
       ? () =>
         writeContract({
           chainId: l2Chain.l1ChaindId,
@@ -60,7 +60,7 @@ export function useWriteDepositETH({ args, ...rest }: UseProveWithdrawalTransact
           ],
         })
       : undefined,
-    writeDepositETHAsync: ready
+    writeProveWithdrawalTransactionAsync: ready
       ? () =>
         writeContractAsync({
           chainId: l2Chain.l1ChaindId,
