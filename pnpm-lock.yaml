@@ -22,7 +22,7 @@ importers:
         version: 5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)
       '@wagmi/core':
         specifier: alpha
-        version: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+        version: 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       op-viem:
         specifier: 1.3.0-alpha
         version: 1.3.0-alpha(@wagmi/core@2.0.0-alpha.10)(typescript@5.0.4)(viem@2.0.0-alpha.17)(wagmi@2.0.0-alpha.10)
@@ -67,8 +67,8 @@ importers:
         specifier: alpha
         version: 2.0.0-alpha.10(typescript@5.0.4)
       dprint:
-        specifier: ^0.40.2
-        version: 0.40.2
+        specifier: ^0.42.5
+        version: 0.42.5
       ethers:
         specifier: ^5.7.0
         version: 5.7.2
@@ -95,7 +95,7 @@ importers:
         version: 0.34.6(happy-dom@12.10.3)
       wagmi:
         specifier: alpha
-        version: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+        version: 2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
 
   docs:
     devDependencies:
@@ -1940,48 +1940,56 @@ packages:
       - '@algolia/client-search'
     dev: true
 
-  /@dprint/darwin-arm64@0.40.2:
-    resolution: {integrity: sha512-qharMFhxpNq9brgvHLbqzzAgVgPWSHLfzNLwWWhKcGOUUDUIilfAo3SlvOz6w4nQiIifLpYZOvZqK7Lpf9mSSw==}
+  /@dprint/darwin-arm64@0.42.5:
+    resolution: {integrity: sha512-3bBBlaAXQ9WTC+jvd2/iyj7cVp0G58/v5R7+YADUl5K9xF+Ah+xLFm6xw4Iwq+zsYaWDimRmLnM5iRSJC9qv1Q==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@dprint/darwin-x64@0.40.2:
-    resolution: {integrity: sha512-FPDdOTVr1JfqtLBTCvqlihWslTy3LBUoi3H1gaqIazCKMj2dB9voFWkBiMT+REMHDrlVsoSpFAfsliNr/y7HPA==}
+  /@dprint/darwin-x64@0.42.5:
+    resolution: {integrity: sha512-gwx6lODOckU3xGv0zVFad/SMMtwBleiBAzm3UVw/WkGiCVo3XrIZ6EdLr4zCmB4A2R+SOxODU70WtONCF0dGnQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@dprint/linux-arm64-glibc@0.40.2:
-    resolution: {integrity: sha512-GmUWfKwEwXA+onvewX9hEJSMcd9V184+uRbEhI5tG28tBP9+IjQhrY7jCjxPvaZA+EvzNPnAy5D1wbJdlNLBNA==}
+  /@dprint/linux-arm64-glibc@0.42.5:
+    resolution: {integrity: sha512-ijJm+zOxHK3Chnis3y5kVzvBr21Ugyodqpz1chClNWkaR+0/BYDik+lxZVrbxZw8gxqPu8iisOceCQQC42Bkzg==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@dprint/linux-x64-glibc@0.40.2:
-    resolution: {integrity: sha512-vMHAHdsOY+2thieSWbIrIioDfPgvipwUgd0MZUWOqycTrXU6kLyi2B+5J/2Jc+QO3CiLIbumQd2FH/0vB1eWqA==}
+  /@dprint/linux-arm64-musl@0.42.5:
+    resolution: {integrity: sha512-OLbJgv14AvJRVBi+ZCXBH0rsMSIdCZi/z1hCTRUb901VB2OVf81k5vvBn7HS5S9wMQ2HIG8GFOyckBg0qhEgAQ==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@dprint/linux-x64-glibc@0.42.5:
+    resolution: {integrity: sha512-tWh1kMbTi/lxS6hQJCDnriZonzGYN6FcN2AqF1C/TdRNjacFVvQnxZTdHPLJbgw0mSujHPinl3NtvllZ9CwVqA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@dprint/linux-x64-musl@0.40.2:
-    resolution: {integrity: sha512-nFSbDWd9ORyOhJ7a+RmE39WbuPoQ3OQutIgfAmfikiu/wENzEwxxv4QJ7aFnBaoZb0wuVEEpXShr8vY4p0exkg==}
+  /@dprint/linux-x64-musl@0.42.5:
+    resolution: {integrity: sha512-GObJlhUqQpaXKRMTUUEkdYgWgS1aVyMUQZFn3dBmLycl4F2gXWxKgYB6R47ESVeejsEvE9fTTuxlpK6fOHjaKQ==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@dprint/win32-x64@0.40.2:
-    resolution: {integrity: sha512-qF4VCQzFTZYD61lbQqXLU/IwUTbLK22CancO+uVtXmZRoKU9GaVjcBhMUB7URxsa8rvxWHhHT6ldillI/aOWCg==}
+  /@dprint/win32-x64@0.42.5:
+    resolution: {integrity: sha512-N2N1FlmbEFbH/WqoKGdsZplBpfq9qdhfkJHQH1poVG3KxqT0dq01oqAfnC3ZQaSBoBrBfp5GyRtj7KwCxdqxXA==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
@@ -2504,11 +2512,11 @@ packages:
         optional: true
     dependencies:
       '@testing-library/react': 14.0.0(react-dom@18.2.0)(react@18.2.0)
-      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       viem: 1.16.6(typescript@5.0.4)
-      wagmi: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      wagmi: 2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -3869,6 +3877,7 @@ packages:
 
   /@tanstack/query-core@5.0.5:
     resolution: {integrity: sha512-MThCETMkHDHTnFZHp71L+SqTtD5d6XHftFCVR1xRJdWM3qGrlQ2VCXaj0SKVcyJej2e1Opa2c7iknu1llxCDNQ==}
+    dev: false
 
   /@tanstack/react-query@5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-9hxP/DZbGucYFaHx6Njhkrbx32lNRk4QqqkGzyQ4IPaYfJTELE7urc9LBYRwrof211cj0W76IxmpjDwZ5ljZpQ==}
@@ -4347,7 +4356,7 @@ packages:
       '@metamask/sdk': 0.8.0(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)
       '@safe-global/safe-apps-provider': 0.18.0(typescript@5.0.4)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.0.4)
-      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       '@walletconnect/ethereum-provider': 2.10.2(@walletconnect/modal@2.6.2)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.31)(react@18.2.0)
       typescript: 5.0.4
@@ -4364,7 +4373,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
+  /@wagmi/core@2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
     resolution: {integrity: sha512-qIKHIoTH1BlI71sqiYPh20GCtUTK+/ORLe9mukUzqw5Zu1aIzEkxUMd4XVZu4joEPl97Gc5813dVHZLHZcTABw==}
     peerDependencies:
       '@tanstack/query-core': '>5.0.0-beta.28'
@@ -4376,7 +4385,6 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@tanstack/query-core': 5.0.5
       eventemitter3: 5.0.1
       mipd: 0.0.5(typescript@5.0.4)
       typescript: 5.0.4
@@ -5749,17 +5757,18 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /dprint@0.40.2:
-    resolution: {integrity: sha512-3LdyUV0itEW59UPtsRA2StOWOu8FyOW+BgvJpH/tACRHKi0z5gaQnvSxdS3mbG7dgtEhdRnGg6JoiQyGib6NTg==}
+  /dprint@0.42.5:
+    resolution: {integrity: sha512-GvC3Hpsm/GKBZe6UjOZVKLb3u86puWc2lm+F+Bqgkk4fjQ9tpvZhENFra9al1rz01qfxsc3+6JZN/E9eJIME5Q==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      '@dprint/darwin-arm64': 0.40.2
-      '@dprint/darwin-x64': 0.40.2
-      '@dprint/linux-arm64-glibc': 0.40.2
-      '@dprint/linux-x64-glibc': 0.40.2
-      '@dprint/linux-x64-musl': 0.40.2
-      '@dprint/win32-x64': 0.40.2
+      '@dprint/darwin-arm64': 0.42.5
+      '@dprint/darwin-x64': 0.42.5
+      '@dprint/linux-arm64-glibc': 0.42.5
+      '@dprint/linux-arm64-musl': 0.42.5
+      '@dprint/linux-x64-glibc': 0.42.5
+      '@dprint/linux-x64-musl': 0.42.5
+      '@dprint/win32-x64': 0.42.5
     dev: true
 
   /duplexify@4.1.2:
@@ -10436,7 +10445,7 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /wagmi@2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
+  /wagmi@2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
     resolution: {integrity: sha512-SBsYn8d1gG5I3vPYsPWo0/UmdlumUHRII5Tnrw2QHx0+Zy9senqfkP5c05WXvDQjLLQdNOsV5gyVQZe2KtcEzg==}
     peerDependencies:
       '@tanstack/react-query': '>5.0.0-beta.28'
@@ -10449,7 +10458,7 @@ packages:
     dependencies:
       '@tanstack/react-query': 5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)
       '@wagmi/connectors': 4.0.0-alpha.10(@types/react@18.2.31)(@wagmi/core@2.0.0-alpha.10)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
-      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       react: 18.2.0
       typescript: 5.0.4
       use-sync-external-store: 1.2.0(react@18.2.0)
