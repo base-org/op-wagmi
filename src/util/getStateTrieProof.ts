@@ -42,6 +42,7 @@ export function useMakeStateTrieProof(
       setProof(proof)
     }
     f()
+    return
   }, [client, blockNumber, address, slot, setProof])
 
   return proof
