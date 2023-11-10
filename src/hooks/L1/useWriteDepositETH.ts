@@ -18,9 +18,10 @@ export type UseWriteDepositETHParameters<config extends Config = Config, context
 export function useWriteDepositETH({ args, l2ChainId, ...rest }: UseWriteDepositETHParameters) {
   const config = useOpConfig(rest)
   const l2Chain = config.l2chains[l2ChainId]
-  const { writeContract, writeContractAsync } = useWriteContract()
+  const { writeContract, writeContractAsync, ...writeResult } = useWriteContract()
 
   return {
+    ...writeResult,
     writeDepositETH: () =>
       writeContract({
         chainId: l2Chain.l1ChaindId,
