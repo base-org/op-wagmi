@@ -91,7 +91,8 @@
     "prepare": "npx simple-git-hooks"
   },
   "dependencies": {
-    "@eth-optimism/contracts-ts": "^0.15.0"
+    "@eth-optimism/contracts-ts": "^0.15.0",
+    "@testing-library/react-hooks": "^8.0.1"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
