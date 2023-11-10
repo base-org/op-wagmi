@@ -8,7 +8,7 @@ import { useSimulateDepositETH } from './useSimulateDepositETH.js'
 const connector = config.connectors[0]!
 const portal = '0xe93c8cD0D409341205A592f8c4Ac1A5fe5585cfA'
 
-test('default', async () => {
+test('useSimulateDepositETH', async () => {
   await connect(config, { connector })
 
   const { result } = renderHook(() =>

@@ -20,9 +20,10 @@ export function useWriteDepositERC20(
 ) {
   const config = useOpConfig(rest)
   const l2Chain = config.l2chains[l2ChainId]
-  const { writeContract, writeContractAsync } = useWriteContract()
+  const { writeContract, writeContractAsync, ...result } = useWriteContract()
 
   return {
+    ...result,
     writeDepositERC20: () =>
       writeContract({
         chainId: l2Chain.l1ChaindId,
