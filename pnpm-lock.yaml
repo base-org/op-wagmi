@@ -22,7 +22,7 @@ importers:
         version: 5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)
       '@wagmi/core':
         specifier: alpha
-        version: 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+        version: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       op-viem:
         specifier: 1.3.0-alpha
         version: 1.3.0-alpha(@wagmi/core@2.0.0-alpha.10)(typescript@5.0.4)(viem@2.0.0-alpha.17)(wagmi@2.0.0-alpha.10)
@@ -101,7 +101,7 @@ importers:
         version: 0.34.6(happy-dom@12.10.3)
       wagmi:
         specifier: alpha
-        version: 2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+        version: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
 
   docs:
     devDependencies:
@@ -2518,11 +2518,11 @@ packages:
         optional: true
     dependencies:
       '@testing-library/react': 14.0.0(react-dom@18.2.0)(react@18.2.0)
-      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       viem: 1.16.6(typescript@5.0.4)
-      wagmi: 2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      wagmi: 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -3015,7 +3015,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       jest-mock: 29.7.0
 
   /@jest/fake-timers@29.7.0:
@@ -3024,7 +3024,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -3041,7 +3041,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.5
       '@types/istanbul-reports': 3.0.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       '@types/yargs': 15.0.17
       chalk: 4.1.2
 
@@ -3051,7 +3051,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.5
       '@types/istanbul-reports': 3.0.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       '@types/yargs': 16.0.7
       chalk: 4.1.2
 
@@ -3062,7 +3062,7 @@ packages:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.5
       '@types/istanbul-reports': 3.0.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       '@types/yargs': 17.0.29
       chalk: 4.1.2
 
@@ -3883,7 +3883,6 @@ packages:
 
   /@tanstack/query-core@5.0.5:
     resolution: {integrity: sha512-MThCETMkHDHTnFZHp71L+SqTtD5d6XHftFCVR1xRJdWM3qGrlQ2VCXaj0SKVcyJej2e1Opa2c7iknu1llxCDNQ==}
-    dev: false
 
   /@tanstack/react-query@5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-9hxP/DZbGucYFaHx6Njhkrbx32lNRk4QqqkGzyQ4IPaYfJTELE7urc9LBYRwrof211cj0W76IxmpjDwZ5ljZpQ==}
@@ -4001,6 +4000,12 @@ packages:
     resolution: {integrity: sha512-21TKHHh3eUHIi2MloeptJWALuCu5H7HQTdTrWIFReA8ad+aggoX+lRes3ex7/FtpC+sVUpFMQ+QTfYr74mruiQ==}
     dependencies:
       undici-types: 5.25.3
+    dev: true
+
+  /@types/node@20.9.1:
+    resolution: {integrity: sha512-HhmzZh5LSJNS5O8jQKpJ/3ZcrrlG6L70hpGqMIAoM9YVD0YBRNWYsfwcXq8VnSjlNpCpgLzMXdiPo+dxcvSmiA==}
+    dependencies:
+      undici-types: 5.26.5
 
   /@types/normalize-package-data@2.4.3:
     resolution: {integrity: sha512-ehPtgRgaULsFG8x0NeYJvmyH1hmlfsNLujHe9dQEia/7MAJYdzMSi19JtchUHjmBA6XC/75dK55mzZH+RyieSg==}
@@ -4030,7 +4035,7 @@ packages:
   /@types/secp256k1@4.0.5:
     resolution: {integrity: sha512-aIonTBMErtE3T9MxDvTZRzcrT/mCqpEZBw3CCY/i+oG9n57N/+7obBkhFgavUAIrX21bU0LHg1XRgtaLdelBhA==}
     dependencies:
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
 
   /@types/semver@7.5.4:
     resolution: {integrity: sha512-MMzuxN3GdFwskAnb6fz0orFvhfqi752yjaXylr0Rp4oDg5H0Zn1IuyRhDVvYOwAXoJirx2xuS16I3WjxnAIHiQ==}
@@ -4362,7 +4367,7 @@ packages:
       '@metamask/sdk': 0.8.0(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)
       '@safe-global/safe-apps-provider': 0.18.0(typescript@5.0.4)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.0.4)
-      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       '@walletconnect/ethereum-provider': 2.10.2(@walletconnect/modal@2.6.2)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.31)(react@18.2.0)
       typescript: 5.0.4
@@ -4379,7 +4384,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /@wagmi/core@2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
+  /@wagmi/core@2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
     resolution: {integrity: sha512-qIKHIoTH1BlI71sqiYPh20GCtUTK+/ORLe9mukUzqw5Zu1aIzEkxUMd4XVZu4joEPl97Gc5813dVHZLHZcTABw==}
     peerDependencies:
       '@tanstack/query-core': '>5.0.0-beta.28'
@@ -4391,6 +4396,7 @@ packages:
       typescript:
         optional: true
     dependencies:
+      '@tanstack/query-core': 5.0.5
       eventemitter3: 5.0.1
       mipd: 0.0.5(typescript@5.0.4)
       typescript: 5.0.4
@@ -7123,7 +7129,7 @@ packages:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -7150,7 +7156,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       jest-util: 29.7.0
 
   /jest-regex-util@27.5.1:
@@ -7162,7 +7168,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -7173,7 +7179,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -7194,7 +7200,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -10084,6 +10090,10 @@ packages:
 
   /undici-types@5.25.3:
     resolution: {integrity: sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==}
+    dev: true
+
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
   /unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
@@ -10259,7 +10269,7 @@ packages:
       - utf-8-validate
       - zod
 
-  /vite-node@0.34.6(@types/node@20.8.7):
+  /vite-node@0.34.6(@types/node@20.9.1):
     resolution: {integrity: sha512-nlBMJ9x6n7/Amaz6F3zJ97EBwR2FkzhBRxF5e+jE6LA3yi6Wtc2lyTij1OnDMIr34v5g/tVQtsVAzhT0jc5ygA==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -10269,7 +10279,7 @@ packages:
       mlly: 1.4.2
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.5.0(@types/node@20.8.7)
+      vite: 4.5.0(@types/node@20.9.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -10316,7 +10326,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vite@4.5.0(@types/node@20.8.7):
+  /vite@4.5.0(@types/node@20.9.1):
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -10344,7 +10354,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       esbuild: 0.18.20
       postcss: 8.4.31
       rollup: 3.29.4
@@ -10430,7 +10440,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.9
       '@types/chai-subset': 1.3.4
-      '@types/node': 20.8.7
+      '@types/node': 20.9.1
       '@vitest/expect': 0.34.6
       '@vitest/runner': 0.34.6
       '@vitest/snapshot': 0.34.6
@@ -10450,8 +10460,8 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.7.0
-      vite: 4.5.0(@types/node@20.8.7)
-      vite-node: 0.34.6(@types/node@20.8.7)
+      vite: 4.5.0(@types/node@20.9.1)
+      vite-node: 0.34.6(@types/node@20.9.1)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
@@ -10505,7 +10515,7 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /wagmi@2.0.0-alpha.10(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
+  /wagmi@2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@tanstack/react-query@5.0.0-beta.35)(@types/react@18.2.31)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17):
     resolution: {integrity: sha512-SBsYn8d1gG5I3vPYsPWo0/UmdlumUHRII5Tnrw2QHx0+Zy9senqfkP5c05WXvDQjLLQdNOsV5gyVQZe2KtcEzg==}
     peerDependencies:
       '@tanstack/react-query': '>5.0.0-beta.28'
@@ -10518,13 +10528,14 @@ packages:
     dependencies:
       '@tanstack/react-query': 5.0.0-beta.35(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)
       '@wagmi/connectors': 4.0.0-alpha.10(@types/react@18.2.31)(@wagmi/core@2.0.0-alpha.10)(react-native@0.72.6)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
-      '@wagmi/core': 2.0.0-alpha.10(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
+      '@wagmi/core': 2.0.0-alpha.10(@tanstack/query-core@5.0.5)(@types/react@18.2.31)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-alpha.17)
       react: 18.2.0
       typescript: 5.0.4
       use-sync-external-store: 1.2.0(react@18.2.0)
       viem: 2.0.0-alpha.17(typescript@5.0.4)(zod@3.22.4)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
+      - '@tanstack/query-core'
       - '@types/react'
       - bufferutil
       - encoding
