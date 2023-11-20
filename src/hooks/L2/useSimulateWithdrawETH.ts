@@ -1,9 +1,12 @@
 'use client'
 
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
-import type { Config, ResolvedRegister } from '@wagmi/core'
+import type { Config } from '@wagmi/core'
 import { type SimulateWithdrawETHParameters } from 'op-viem/actions'
-import { useChainId, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import type { OpConfig } from '../../types/OpConfig.js'
+import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
+import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
 import { useOpConfig } from '../useOpConfig.js'
 
 const ABI = l2StandardBridgeABI
@@ -11,12 +14,17 @@ const FUNCTION = 'withdrawTo'
 export const OVM_ETH = '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'
 
 export type UseSimulateWithdrawETHParameters<
-  config extends Config = ResolvedRegister['config'],
+  config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
-  & UseSimulateContractParameters<typeof ABI, typeof FUNCTION>
-  & SimulateWithdrawETHParameters
-  & { chainId?: chainId }
+  & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
+  & Pick<SimulateWithdrawETHParameters, 'args'>
+  & { chainId: number }
+
+export type UseSimulateWithdrawETHReturnType<
+  config extends Config = OpConfig,
+  chainId extends config['chains'][number]['id'] | undefined = undefined,
+> = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
 /**
  * Simulates a withdrawal of ETH to an L1 address.
@@ -24,19 +32,22 @@ export type UseSimulateWithdrawETHParameters<
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateWithdrawETHReturnType}
  */
 export function useSimulateWithdrawETH<
-  config extends Config = ResolvedRegister['config'],
+  config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
-  { args, chainId, ...rest }: UseSimulateWithdrawETHParameters<config, chainId>,
-) {
+  { args, chainId, query, ...rest }: UseSimulateWithdrawETHParameters<config, chainId>,
+): UseSimulateWithdrawETHReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
-  const l2ChainId = chainId || useChainId(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const l2Chain = opConfig.l2chains[chainId]
 
   return useSimulateContract({
     address: l2Chain.l2Addresses.l2StandardBridge.address,
     abi: ABI,
     functionName: FUNCTION,
-    args: [OVM_ETH, args.to, args.amount, args.minGasLimit, args.extraData || '0x'],
-  })
+    chainId: l2Chain.chainId,
+    args: [OVM_ETH, args.to, args.amount, args.minGasLimit, args.extraData ?? '0x'],
+    value: args.amount,
+    query: query as UseSimulateContractParameters['query'],
+    ...rest,
+  }) as unknown as UseSimulateWithdrawETHReturnType<config, chainId>
 }

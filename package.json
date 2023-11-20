@@ -60,7 +60,8 @@
     "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "5.0.4",
     "vitest": "^0.34.1",
-    "wagmi": "alpha"
+    "wagmi": "beta",
+    "@tanstack/react-query": ">=5.0.0"
   },
   "scripts": {
     "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
@@ -87,19 +88,19 @@
     "bench:ci": "CI=true vitest bench",
     "dev:docs": "pnpm -r --filter docs dev",
     "dev:example": "pnpm -r --filter example dev",
+    "dev:demo": "pnpm -r --filter demo dev",
     "prepare": "npx simple-git-hooks"
   },
   "dependencies": {
     "@eth-optimism/contracts-ts": "^0.15.0"
   },
   "peerDependencies": {
-    "@tanstack/query-core": ">=5.0.0",
-    "@tanstack/react-query": "beta",
-    "@wagmi/core": "alpha",
+    "@tanstack/react-query": ">=5.0.0",
+    "@wagmi/core": "beta",
     "op-viem": "1.3.0-alpha",
     "typescript": ">=5.0.4",
-    "viem": "2.0.0-alpha.17",
-    "wagmi": "alpha"
+    "viem": "2.0.0-beta.0",
+    "wagmi": "beta"
   },
   "peerDependenciesMeta": {
     "typescript": {

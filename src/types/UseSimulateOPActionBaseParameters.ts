@@ -1,6 +1,8 @@
 import type { Abi, ContractFunctionArgs, ContractFunctionName } from 'viem'
-import type { Config, ResolvedRegister, UseSimulateContractParameters } from 'wagmi'
+import type { Config, UseSimulateContractParameters } from 'wagmi'
 import type { SimulateContractData } from 'wagmi/query'
+import type { ConfigParameter } from '../hooks/useOpConfig.js'
+import type { OpConfig } from './OpConfig.js'
 
 export type UseSimulateOPActionBaseParameters<
   abi extends Abi | readonly unknown[] = Abi,
@@ -8,7 +10,7 @@ export type UseSimulateOPActionBaseParameters<
     abi,
     'nonpayable' | 'payable'
   > = ContractFunctionName<abi, 'nonpayable' | 'payable'>,
-  config extends Config = ResolvedRegister['config'],
+  config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
   selectData = SimulateContractData<
     abi,
@@ -27,9 +29,16 @@ export type UseSimulateOPActionBaseParameters<
       chainId,
       selectData
     >,
-    'abi' | 'functionName' | 'args' | 'query' | 'address'
+    | 'value'
+    | 'type'
+    | 'gasPrice'
+    | 'blockNumber'
+    | 'address'
+    | 'abi'
+    | 'functionName'
+    | 'args'
+    | 'chainId'
+    | 'config'
+    | 'query'
   >
-  & {
-    query?: { enabled?: boolean }
-    config?: config
-  }
+  & ConfigParameter<config>

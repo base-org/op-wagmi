@@ -7,8 +7,6 @@ import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 import { Modal } from './Modal'
 
-const portal = '0xe93c8cD0D409341205A592f8c4Ac1A5fe5585cfA'
-
 type DepositETHModalProps = {
   isOpen: boolean
   onClose: () => void
@@ -22,13 +20,14 @@ function DepositETHModal({ isOpen, onClose }: DepositETHModalProps) {
     args: {
       to: to as Address,
       gasLimit: 100000,
+      amount: parseEther(amount),
     },
-    portal,
-    chainId: 5,
-    value: parseEther(amount),
+    l2ChainId: 84531,
     query: { enabled: false },
   })
-  const { data, status: writeStatus, writeDepositETHAsync } = useWriteDepositETH()
+  const { data: l1TxHash, l2TxHash, status: writeStatus, writeDepositETHAsync } = useWriteDepositETH({
+    l2ChainId: 84531,
+  })
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -39,10 +38,8 @@ function DepositETHModal({ isOpen, onClose }: DepositETHModalProps) {
           args: {
             to: to as Address,
             gasLimit: 100000,
+            amount: parseEther(amount),
           },
-          portal,
-          chainId: 5,
-          value: parseEther(amount),
         })
       } catch (e) {
         console.error(e)
@@ -76,16 +73,29 @@ function DepositETHModal({ isOpen, onClose }: DepositETHModalProps) {
               <span className='text-white'>Status:</span>
               <span className='text-white'>{writeStatus}</span>
             </div>
-            {data && (
+            {l1TxHash && (
               <div className='flex flex-row justify-center space-x-8 items-center w-full'>
-                <span className='text-white'>Transaction:</span>
+                <span className='text-white'>L1 Tx:</span>
                 <a
                   className='text-blue-500 underline'
                   target='_blank'
                   rel='noreferrer'
-                  href={`https://goerli.etherscan.io/tx/${data}`}
+                  href={`https://goerli.etherscan.io/tx/${l1TxHash}`}
                 >
-                  {`${data?.slice(0, 8)}...`}
+                  {`${l1TxHash?.slice(0, 8)}...`}
+                </a>
+              </div>
+            )}
+            {l2TxHash && (
+              <div className='flex flex-row justify-center space-x-8 items-center w-full'>
+                <span className='text-white'>L2 Tx:</span>
+                <a
+                  className='text-blue-500 underline'
+                  target='_blank'
+                  rel='noreferrer'
+                  href={`https://goerli.basescan.org/tx/${l2TxHash}`}
+                >
+                  {`${l2TxHash?.slice(0, 8)}...`}
                 </a>
               </div>
             )}

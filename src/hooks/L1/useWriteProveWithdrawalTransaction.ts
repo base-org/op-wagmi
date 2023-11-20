@@ -1,80 +1,117 @@
-import { optimismPortalABI } from '@eth-optimism/contracts-ts'
+import { useMutation } from '@tanstack/react-query'
+import {
+  getLatestProposedL2BlockNumber,
+  getOutputForL2Block,
+  getProveWithdrawalTransactionArgs,
+  getWithdrawalMessages,
+  simulateProveWithdrawalTransaction,
+  writeProveWithdrawalTransaction,
+} from 'op-viem/actions'
 import type { Hash } from 'viem'
-import { type UseSimulateContractParameters, useWriteContract } from 'wagmi'
-import type { WithdrawalMessage } from '../../types/WithdrawalMessage.js'
+import { type Config } from 'wagmi'
+import { getPublicClient, getWalletClient } from 'wagmi/actions'
+import type { OpConfig } from '../../types/OpConfig.js'
+import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
+import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import { useOpConfig } from '../useOpConfig.js'
-import { useProveWithdrawalArgs } from './useProveWithdrawalArgs.js'
 
-export type UseProveWithdrawalTransactionParameters =
-  & UseSimulateContractParameters
+export type WriteProveWithdrawalTransactionParameters = {
+  args: {
+    l1WithdrawalTxHash: Hash
+  }
+}
+
+export type UseWriteProveWithdrawalTransactionParameters<config extends Config = OpConfig, context = unknown> =
+  & UseWriteOPActionBaseParameters<config, context>
   & {
-    args: {
-      l1WithdrawalTxHash: Hash
-      l2ChainId: number
-    }
+    l2ChainId: number
   }
 
-type OutputRootProof = {
-  version: `0x${string}`
-  stateRoot: `0x${string}`
-  messagePasserStorageRoot: `0x${string}`
-  latestBlockhash: `0x${string}`
+export type UseWriteProveWithdrawalTransactionReturnType<config extends Config = OpConfig, context = unknown> =
+  & Omit<
+    UseWriteOPActionBaseReturnType<WriteProveWithdrawalTransactionParameters, config, context>,
+    'write' | 'writeAsync'
+  >
+  & {
+    writeProveWithdrawalTransaction: UseWriteOPActionBaseReturnType<
+      WriteProveWithdrawalTransactionParameters,
+      config,
+      context
+    >['write']
+    writeProveWithdrawalTransactionAsync: UseWriteOPActionBaseReturnType<
+      WriteProveWithdrawalTransactionParameters,
+      config,
+      context
+    >['writeAsync']
+  }
+
+type ProveWithdrawalTransactionMutationParameters = WriteProveWithdrawalTransactionParameters & {
+  l1ChainId: number
+  l2ChainId: number
+}
+
+async function writeMutation(
+  config: OpConfig,
+  { l1ChainId, l2ChainId, ...params }: ProveWithdrawalTransactionMutationParameters,
+) {
+  const walletClient = await getWalletClient(config, { chainId: l1ChainId })
+  const l1PublicClient = getPublicClient(config, { chainId: l1ChainId })
+  const l2PublicClient = getPublicClient(config, { chainId: l2ChainId })
+  const l1Addresses = config.l2chains[l2ChainId].l1Addresses
+
+  const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
+    hash: params.args.l1WithdrawalTxHash,
+  })
+
+  const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
+    ...l1Addresses,
+  })
+
+  const output = await getOutputForL2Block(l1PublicClient, {
+    l2BlockNumber,
+    ...l1Addresses,
+  })
+
+  const args = await getProveWithdrawalTransactionArgs(l2PublicClient, {
+    message: withdrawalMessages.messages[0],
+    output: output,
+  })
+
+  await simulateProveWithdrawalTransaction(l1PublicClient, {
+    args,
+    account: walletClient.account.address,
+    ...l1Addresses,
+  })
+  return writeProveWithdrawalTransaction(walletClient, { args, account: walletClient.account.address, ...l1Addresses })
 }
 
 /**
  * Deposits ETH to L2 using the OptimismPortal contract
- * @param parameters - {@link UseWriteDepositETHParameters}
- * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositETHReturnType}
+ * @param parameters - {@link UseWriteProveWithdrawalTransactionParameters}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteProveWithdrawalTransactionReturnType}
  */
-export function useWriteDepositETH({ args, ...rest }: UseProveWithdrawalTransactionParameters) {
-  const { writeContract, writeContractAsync } = useWriteContract()
-
+export function useWriteProveWithdrawalTransaction<config extends Config = OpConfig, context = unknown>(
+  { l2ChainId, ...rest }: UseWriteProveWithdrawalTransactionParameters<config, context>,
+): UseWriteProveWithdrawalTransactionReturnType<config, context> {
   const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[args.l2ChainId]
+  const l2Chain = opConfig.l2chains[l2ChainId]
 
   if (!l2Chain) {
     throw new Error('L2 chain not configured')
   }
 
-  const { withdrawalMessage, withdrawalOutputIndex, bedrockProof } = useProveWithdrawalArgs({
-    l2ChainId: args.l2ChainId,
-    config: opConfig,
-    l1WithdrawalTxHash: args.l1WithdrawalTxHash,
-  })
+  const mutation = {
+    mutationFn(params: WriteProveWithdrawalTransactionParameters) {
+      return writeMutation(opConfig, { ...params, l1ChainId: l2Chain.l1ChaindId, l2ChainId: l2ChainId })
+    },
+    mutationKey: ['writeContract'],
+  }
 
-  const ready = Boolean(withdrawalMessage && withdrawalOutputIndex && bedrockProof)
+  const { mutate, mutateAsync, ...result } = useMutation(mutation)
 
   return {
-    writeProveWithdrawalTransaction: ready
-      ? () =>
-        writeContract({
-          chainId: l2Chain.l1ChaindId,
-          abi: optimismPortalABI,
-          address: l2Chain.l1Addresses.portal.address,
-          functionName: 'proveWithdrawalTransaction',
-          args: [
-            withdrawalMessage as WithdrawalMessage,
-            withdrawalOutputIndex as bigint,
-            bedrockProof?.outputRootProof as OutputRootProof,
-            bedrockProof?.withdrawalProof as `0x${string}`[],
-          ],
-        })
-      : undefined,
-    writeProveWithdrawalTransactionAsync: ready
-      ? () =>
-        writeContractAsync({
-          chainId: l2Chain.l1ChaindId,
-          abi: optimismPortalABI,
-          address: l2Chain.l1Addresses.portal.address,
-          functionName: 'proveWithdrawalTransaction',
-          args: [
-            withdrawalMessage as WithdrawalMessage,
-            withdrawalOutputIndex as bigint,
-            bedrockProof?.outputRootProof as OutputRootProof,
-            bedrockProof?.withdrawalProof as `0x${string}`[],
-          ],
-        })
-      : undefined,
-    ready,
-  }
+    ...result,
+    writeProveWithdrawalTransaction: mutate,
+    writeProveWithdrawalTransactionAsync: mutateAsync,
+  } as unknown as UseWriteProveWithdrawalTransactionReturnType<config, context>
 }

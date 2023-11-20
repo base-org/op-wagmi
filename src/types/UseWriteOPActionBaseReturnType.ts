@@ -1,12 +1,12 @@
 import type { WriteContractReturnType } from '@wagmi/core'
 import type { Config, UseWriteContractReturnType } from 'wagmi'
+import type { OpConfig } from './OpConfig.js'
 
 export type UseWriteOPActionBaseReturnType<
-  args extends { chainId?: number },
-  config extends Config = Config,
+  args,
+  config extends Config = OpConfig,
   context = unknown,
 > =
-  & { guh: number }
   & Omit<UseWriteContractReturnType<config, context>, 'writeContract' | 'writeContractAsync'>
   & {
     write: (args: args) => void

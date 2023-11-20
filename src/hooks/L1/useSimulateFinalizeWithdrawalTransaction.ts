@@ -2,13 +2,7 @@
 
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
-import {
-  getLatestProposedL2BlockNumber,
-  getOutputForL2Block,
-  getProveWithdrawalTransactionArgs,
-  getWithdrawalMessages,
-  simulateProveWithdrawalTransaction,
-} from 'op-viem/actions'
+import { getWithdrawalMessages, simulateFinalizeWithdrawalTransaction } from 'op-viem/actions'
 import { type Hash } from 'viem'
 import { type Config, useAccount, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
@@ -18,9 +12,9 @@ import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateO
 import { useOpConfig } from '../useOpConfig.js'
 
 const ABI = optimismPortalABI
-const FUNCTION = 'proveWithdrawalTransaction'
+const FUNCTION = 'finalizeWithdrawalTransaction'
 
-export type UseSimulateProveWithdrawalTransactionParameters<
+export type UseSimulateFinalizeWithdrawalTransactionParameters<
   config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
@@ -32,22 +26,25 @@ export type UseSimulateProveWithdrawalTransactionParameters<
     l2ChainId: number
   }
 
-export type UseSimulateProveWithdrawalTransactionReturnType<
+export type UseSimulateFinalizeWithdrawalTransactionReturnType<
   config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
 /**
- * Simulates proving a withdrawal transaction.
- * @param parameters - {@link UseSimulateProveWithdrawalTransactionParameters}
- * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateProveWithdrawalTransactionReturnType}
+ * Simulates finalizing a withdrawal transaction.
+ * @param parameters - {@link UseSimulateFinalizeWithdrawalTransactionParameters}
+ * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateFinalizeWithdrawalTransactionReturnType}
  */
-export function useSimulateProveWithdrawalTransaction<
+export function useSimulateFinalizeWithdrawalTransaction<
   config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
-  { args, l2ChainId, query: queryOverride, ...rest }: UseSimulateProveWithdrawalTransactionParameters<config, chainId>,
-): UseSimulateProveWithdrawalTransactionReturnType<config, chainId> {
+  { args, l2ChainId, query: queryOverride, ...rest }: UseSimulateFinalizeWithdrawalTransactionParameters<
+    config,
+    chainId
+  >,
+): UseSimulateFinalizeWithdrawalTransactionReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
 
@@ -66,22 +63,8 @@ export function useSimulateProveWithdrawalTransaction<
         hash: args.l1WithdrawalTxHash,
       })
 
-      const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
-        ...l1Addresses,
-      })
-
-      const output = await getOutputForL2Block(l1PublicClient, {
-        l2BlockNumber,
-        ...l1Addresses,
-      })
-
-      const simulateProveWithdrawalTransactionArgs = await getProveWithdrawalTransactionArgs(l2PublicClient, {
-        message: withdrawalMessages.messages[0],
-        output: output,
-      })
-
-      return simulateProveWithdrawalTransaction(l1PublicClient, {
-        args: simulateProveWithdrawalTransactionArgs,
+      return simulateFinalizeWithdrawalTransaction(l1PublicClient, {
+        withdrawal: withdrawalMessages.messages[0],
         account: address,
         ...l1Addresses,
       })

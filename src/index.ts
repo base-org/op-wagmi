@@ -1,6 +1,14 @@
 export { useSimulateDepositERC20, type UseSimulateDepositERC20Parameters } from './hooks/L1/useSimulateDepositERC20.js'
 export { useSimulateDepositETH, type UseSimulateDepositETHParameters } from './hooks/L1/useSimulateDepositETH.js'
 export {
+  useSimulateFinalizeWithdrawalTransaction,
+  type UseSimulateFinalizeWithdrawalTransactionParameters,
+} from './hooks/L1/useSimulateFinalizeWithdrawalTransaction.js'
+export {
+  useSimulateProveWithdrawalTransaction,
+  type UseSimulateProveWithdrawalTransactionParameters,
+} from './hooks/L1/useSimulateProveWithdrawalTransaction.js'
+export {
   useWriteDepositERC20,
   type UseWriteDepositERC20Parameters,
   type WriteDepositERC20Parameters,
@@ -10,6 +18,16 @@ export {
   type UseWriteDepositETHParameters,
   type WriteDepositETHParameters,
 } from './hooks/L1/useWriteDepositETH.js'
+export {
+  useWriteFinalizeWithdrawalTransaction,
+  type UseWriteFinalizeWithdrawalTransactionParameters,
+  type WriteFinalizeWithdrawalTransactionParameters,
+} from './hooks/L1/useWriteFinalizeWithdrawalTransaction.js'
+export {
+  useWriteProveWithdrawalTransaction,
+  type UseWriteProveWithdrawalTransactionParameters,
+  type WriteProveWithdrawalTransactionParameters,
+} from './hooks/L1/useWriteProveWithdrawalTransaction.js'
 export {
   useSimulateWithdrawERC20,
   type UseSimulateWithdrawERC20Parameters,
