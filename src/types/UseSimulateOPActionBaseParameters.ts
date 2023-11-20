@@ -39,6 +39,5 @@ export type UseSimulateOPActionBaseParameters<
     | 'args'
     | 'chainId'
     | 'config'
-    | 'query'
   >
   & ConfigParameter<config>
