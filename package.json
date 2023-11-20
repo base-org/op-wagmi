@@ -88,7 +88,6 @@
     "bench:ci": "CI=true vitest bench",
     "dev:docs": "pnpm -r --filter docs dev",
     "dev:example": "pnpm -r --filter example dev",
-    "dev:demo": "pnpm -r --filter demo dev",
     "prepare": "npx simple-git-hooks"
   },
   "dependencies": {

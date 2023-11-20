@@ -1,14 +1,16 @@
 'use client'
 
+import { BridgeToggle } from '@/components/BridgeToggle'
 import { ConnectButton } from '@/components/ConnectButton'
-import { DepositERC20 } from '@/components/DepositERC20'
-import { DepositETH } from '@/components/DepositETH'
-import { WithdrawETH } from '@/components/WithdrawETH'
-import { WithdrawERC20 } from '@/components/WriteWithdrawERC20'
+import { DepositContainer } from '@/components/DepositContainer'
+import { FinalizeContainer } from '@/components/FinalizeContainer'
+import { ProveContainer } from '@/components/ProveContainer'
+import { WithdrawContainer } from '@/components/WithdrawContainer'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false)
+  const [action, setAction] = useState<'deposit' | 'withdraw' | 'prove' | 'finalize'>('deposit')
 
   useEffect(() => {
     setIsClient(true)
@@ -16,13 +18,14 @@ export default function Home() {
 
   return (isClient && (
     <main className='flex min-h-screen flex-col items-center justify-center p-24 space-y-16'>
-      <span className='text-4xl font-bold text-white'>op-wagmi</span>
+      <span className='text-4xl font-bold text-white'>🔴🔵 Superchain Bridge 🔵🔴</span>
       <ConnectButton />
-      <div className='flex flex-col space-y-6 items-center'>
-        <DepositETH />
-        <DepositERC20 />
-        <WithdrawETH />
-        <WithdrawERC20 />
+      <div className='flex flex-col justify-start items-center space-y-8 w-full shadow-lg shadow-white rounded-lg py-16 pt-8 px-4'>
+        <BridgeToggle action={action} setAction={setAction} />
+        {action === 'deposit' && <DepositContainer />}
+        {action === 'withdraw' && <WithdrawContainer />}
+        {action === 'prove' && <ProveContainer />}
+        {action === 'finalize' && <FinalizeContainer />}
       </div>
     </main>
   ))
