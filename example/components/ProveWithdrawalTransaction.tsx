@@ -24,9 +24,7 @@ export function ProveWithdrawalTransaction({ selectedChainId }: ProveWithdrawalT
   )
 
   const { data: l1TxHash, status: writeStatus, writeProveWithdrawalTransactionAsync } =
-    useWriteProveWithdrawalTransaction({
-      l2ChainId: selectedChainId,
-    })
+    useWriteProveWithdrawalTransaction()
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -36,6 +34,7 @@ export function ProveWithdrawalTransaction({ selectedChainId }: ProveWithdrawalT
         args: {
           l1WithdrawalTxHash: withdrawalTxHash as Hash,
         },
+        l2ChainId: selectedChainId,
       })
     }
   }

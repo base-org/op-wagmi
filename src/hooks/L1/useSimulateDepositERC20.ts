@@ -16,7 +16,8 @@ export type UseSimulateDepositERC20Parameters<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  & Pick<SimulateDepositERC20Parameters, 'args'>
+  // The L1CrossDomainMessenger will add the L2 gas we need, so we can pass 0 to the contract by default & make the argument optional
+  & { args: Omit<Pick<SimulateDepositERC20Parameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { l2ChainId: number }
 
 export type UseSimulateDepositERC20ReturnType<
@@ -42,7 +43,7 @@ export function useSimulateDepositERC20<
     address: l2Chain.l1Addresses.l1StandardBridge.address,
     abi: ABI,
     functionName: FUNCTION,
-    args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit, args.extraData ?? '0x'],
+    args: [args.l1Token, args.l2Token, args.to, args.amount, args?.minGasLimit ?? 0, args?.extraData ?? '0x'],
     chainId: l2Chain.l1ChaindId,
     query: query as UseSimulateContractParameters['query'],
     ...rest,

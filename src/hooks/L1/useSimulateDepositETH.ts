@@ -2,7 +2,7 @@
 
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositETHParameters } from 'op-viem/actions'
-import { type Config, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { type Config, useEstimateGas, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
@@ -16,7 +16,8 @@ export type UseSimulateDepositETHParameters<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  & Pick<SimulateDepositETHParameters, 'args'>
+  // We'll estimate the L2 gas needed so we can make the gasLimit argument optional
+  & { args: Omit<Pick<SimulateDepositETHParameters, 'args'>['args'], 'gasLimit'> & { gasLimit?: number } }
   & { l2ChainId: number }
 
 export type UseSimulateDepositETHReturnType<
@@ -37,15 +38,22 @@ export function useSimulateDepositETH<
 ): UseSimulateDepositETHReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
+  const { data: l2GasEstimate } = useEstimateGas({
+    chainId: l2ChainId,
+    to: args.to,
+    value: args.amount,
+    data: args?.data,
+  })
 
+  const enabled = Boolean(args?.gasLimit || l2GasEstimate) && (query?.enabled ?? true)
   return useSimulateContract({
     address: l2Chain.l1Addresses.portal.address,
     abi: ABI,
     functionName: FUNCTION,
-    args: [args.to, args.amount, BigInt(args.gasLimit), false, args.data ?? '0x'],
+    args: [args.to, args.amount, BigInt(args?.gasLimit ?? l2GasEstimate ?? 0), false, args?.data ?? '0x'],
     chainId: l2Chain.l1ChaindId,
     value: args.amount,
-    query: query as UseSimulateContractParameters['query'],
+    query: { ...query, enabled } as UseSimulateContractParameters['query'],
     ...rest,
   }) as unknown as UseSimulateDepositETHReturnType<config, chainId>
 }

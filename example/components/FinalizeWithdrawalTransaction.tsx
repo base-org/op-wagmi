@@ -25,9 +25,7 @@ export function FinalizeWithdrawalTransaction({ selectedChainId }: FinalizeWithd
     )
 
   const { data: l1TxHash, status: writeStatus, writeFinalizeWithdrawalTransactionAsync } =
-    useWriteFinalizeWithdrawalTransaction({
-      l2ChainId: selectedChainId,
-    })
+    useWriteFinalizeWithdrawalTransaction()
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -37,6 +35,7 @@ export function FinalizeWithdrawalTransaction({ selectedChainId }: FinalizeWithd
         args: {
           l1WithdrawalTxHash: withdrawalTxHash as Hash,
         },
+        l2ChainId: selectedChainId,
       })
     }
   }

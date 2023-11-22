@@ -5,11 +5,6 @@ import { Action, ActionToggle } from './ActionToggle'
 import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 
-const chainIdToExplorer: Record<number, string> = {
-  84531: 'https://goerli.basescan.org/',
-  420: 'https://goerli-optimism.etherscan.io/',
-}
-
 type DepositETHProps = {
   selectedChainId: number
 }
@@ -22,15 +17,12 @@ export function DepositETH({ selectedChainId }: DepositETHProps) {
   const { status: simulateStatus, refetch: simulateDepositETH } = useSimulateDepositETH({
     args: {
       to: to as Address,
-      gasLimit: 100000,
       amount: parseEther(amount),
     },
     l2ChainId: selectedChainId,
     query: { enabled: false, retry: false },
   })
-  const { data: l1TxHash, l2TxHash, status: writeStatus, writeDepositETHAsync } = useWriteDepositETH({
-    l2ChainId: selectedChainId,
-  })
+  const { data: l1TxHash, status: writeStatus, writeDepositETHAsync } = useWriteDepositETH()
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -39,9 +31,9 @@ export function DepositETH({ selectedChainId }: DepositETHProps) {
       await writeDepositETHAsync({
         args: {
           to: to as Address,
-          gasLimit: 100000,
           amount: parseEther(amount),
         },
+        l2ChainId: selectedChainId,
       })
     }
   }
@@ -80,19 +72,6 @@ export function DepositETH({ selectedChainId }: DepositETHProps) {
                 href={`https://goerli.etherscan.io/tx/${l1TxHash}`}
               >
                 {`${l1TxHash?.slice(0, 8)}...`}
-              </a>
-            </div>
-          )}
-          {l2TxHash && (
-            <div className='flex flex-row justify-center space-x-8 items-center w-full'>
-              <span className='text-white'>L2 Tx:</span>
-              <a
-                className='text-blue-500 underline'
-                target='_blank'
-                rel='noreferrer'
-                href={`${chainIdToExplorer[selectedChainId]}/tx/${l2TxHash}`}
-              >
-                {`${l2TxHash?.slice(0, 8)}...`}
               </a>
             </div>
           )}

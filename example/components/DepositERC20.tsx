@@ -6,11 +6,6 @@ import { Action, ActionToggle } from './ActionToggle'
 import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 
-const chainIdToExplorer: Record<number, string> = {
-  84531: 'https://goerli.basescan.org',
-  420: 'https://goerli-optimism.etherscan.io',
-}
-
 const cbETHL1 = '0xD0bb78d0B337aA6D3A0530DD2e58560bf00851f1'
 const cbETHL2 = '0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2'
 
@@ -35,16 +30,14 @@ export function DepositERC20({ selectedChainId }: DepositERC20Props) {
   const { status: simulateStatus, refetch: simulateDepositERC20 } = useSimulateDepositERC20({
     args: {
       l1Token: l1Token as Address,
+      l2Token: l2Token as Address,
       to: to as Address,
-      gasLimit: 100000,
       amount: parseUnits(amount, tokenDecimals ?? 18),
     },
     l2ChainId: selectedChainId,
     query: { enabled: false, retry: false },
   })
-  const { data: l1TxHash, l2TxHash, status: writeStatus, writeDepositERC20Async } = useWriteDepositERC20({
-    l2ChainId: selectedChainId,
-  })
+  const { data: l1TxHash, status: writeStatus, writeDepositERC20Async } = useWriteDepositERC20()
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -53,10 +46,11 @@ export function DepositERC20({ selectedChainId }: DepositERC20Props) {
       await writeDepositERC20Async({
         args: {
           l1Token: l1Token as Address,
+          l2Token: l2Token as Address,
           to: to as Address,
-          gasLimit: 100000,
           amount: parseUnits(amount, tokenDecimals ?? 18),
         },
+        l2ChainId: selectedChainId,
       })
     }
   }
@@ -109,19 +103,6 @@ export function DepositERC20({ selectedChainId }: DepositERC20Props) {
                 href={`https://goerli.etherscan.io/tx/${l1TxHash}`}
               >
                 {`${l1TxHash?.slice(0, 8)}...`}
-              </a>
-            </div>
-          )}
-          {l2TxHash && (
-            <div className='flex flex-row justify-center space-x-8 items-center w-full'>
-              <span className='text-white'>L2 Tx:</span>
-              <a
-                className='text-blue-500 underline'
-                target='_blank'
-                rel='noreferrer'
-                href={`${chainIdToExplorer[selectedChainId]}/tx/${l2TxHash}`}
-              >
-                {`${l2TxHash?.slice(0, 8)}...`}
               </a>
             </div>
           )}

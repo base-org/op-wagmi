@@ -28,9 +28,7 @@ export function WithdrawETH({ selectedChainId }: WithdrawETHProps) {
     chainId: selectedChainId,
     query: { enabled: false },
   })
-  const { data: l2TxHash, status: writeStatus, writeWithdrawETHAsync } = useWriteWithdrawETH({
-    chainId: selectedChainId,
-  })
+  const { data: l2TxHash, status: writeStatus, writeWithdrawETHAsync } = useWriteWithdrawETH()
 
   const handleClick = async () => {
     if (action === 'simulate') {
@@ -42,6 +40,7 @@ export function WithdrawETH({ selectedChainId }: WithdrawETHProps) {
           minGasLimit: 100000,
           amount: parseEther(amount),
         },
+        chainId: selectedChainId,
       })
     }
   }
