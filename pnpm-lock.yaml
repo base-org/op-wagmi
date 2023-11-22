@@ -62,7 +62,7 @@ importers:
         version: 0.34.6(vitest@0.34.6)
       '@wagmi/cli':
         specifier: alpha
-        version: 2.0.0-alpha.10(typescript@5.0.4)
+        version: 2.0.0-alpha.11(typescript@5.0.4)
       dprint:
         specifier: ^0.42.5
         version: 0.42.5
@@ -4305,8 +4305,8 @@ packages:
       - vue
     dev: true
 
-  /@wagmi/cli@2.0.0-alpha.10(typescript@5.0.4):
-    resolution: {integrity: sha512-egNlczyJy9thN491so+dBWgfE9gKs7XwxXL61biN8PQNlH+InOQHCgwIc7IERFgv7NhgHJ2FE3WGvTCdQP7apQ==}
+  /@wagmi/cli@2.0.0-alpha.11(typescript@5.0.4):
+    resolution: {integrity: sha512-F+hMWxrbgVfkqX3VFHR9x3JU4FZMuSK0Sk7UKYFIlA9mlT63v44gylCGpv9ZjBbjzVN/GCTOTwGabTgi9yhXOg==}
     hasBin: true
     peerDependencies:
       typescript: '>=5'
@@ -4332,7 +4332,7 @@ packages:
       picocolors: 1.0.0
       prettier: 3.0.3
       typescript: 5.0.4
-      viem: 2.0.0-alpha.17(typescript@5.0.4)(zod@3.22.4)
+      viem: 2.0.0-alpha.21(typescript@5.0.4)(zod@3.22.4)
       zod: 3.22.4
     transitivePeerDependencies:
       - bufferutil
@@ -10230,8 +10230,8 @@ packages:
       - utf-8-validate
       - zod
 
-  /viem@2.0.0-alpha.17(typescript@5.0.4)(zod@3.22.4):
-    resolution: {integrity: sha512-oxC8mWdrcBMDHQHAzCGIPwOJ4ceyInbojj1aDxfEfITI+IVhDq6VxtxCJuM4DbcKq74uogs6GkXkyOlcPIovbg==}
+  /viem@2.0.0-alpha.21(typescript@5.0.4)(zod@3.22.4):
+    resolution: {integrity: sha512-E2cJc2gZv/Ein7xsvSyNhHqjePuBut39sIyWwBFs/nrqhaMhFWGaphSY+bOzzclGK7HX2fShKDitVsMwEmEtGg==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
