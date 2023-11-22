@@ -1,23 +1,7 @@
 import type { Config, UseWriteContractParameters } from 'wagmi'
+import type { OpConfig } from './OpConfig.js'
 
 export type UseWriteOPActionBaseParameters<
-  args extends { chainId?: number },
-  config extends Config = Config,
+  config extends Config = OpConfig,
   context = unknown,
-> =
-  & Omit<
-    UseWriteContractParameters<
-      config,
-      context
-    >,
-    'mutation'
-  >
-  & {
-    mutation?: Omit<UseWriteContractParameters<config, context>['mutation'], 'onMutate'> & {
-      onMutate?:
-        | ((
-          args: args,
-        ) => Promise<context | void> | context | void)
-        | undefined
-    }
-  }
+> = UseWriteContractParameters<config, context>

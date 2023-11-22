@@ -1,6 +1,7 @@
 import type { Abi, ContractFunctionArgs, ContractFunctionName } from 'viem'
-import type { Config, ResolvedRegister, UseSimulateContractReturnType } from 'wagmi'
+import type { Config, UseSimulateContractReturnType } from 'wagmi'
 import type { SimulateContractData } from 'wagmi/query'
+import type { OpConfig } from './OpConfig.js'
 
 export type UseSimulateOPActionBaseReturnType<
   abi extends Abi | readonly unknown[] = Abi,
@@ -8,7 +9,7 @@ export type UseSimulateOPActionBaseReturnType<
     abi,
     'nonpayable' | 'payable'
   > = ContractFunctionName<abi, 'nonpayable' | 'payable'>,
-  config extends Config = ResolvedRegister['config'],
+  config extends Config = OpConfig,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
   selectData = SimulateContractData<
     abi,

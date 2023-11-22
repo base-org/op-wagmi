@@ -1,46 +1,40 @@
-import { useSimulateWithdrawETH, useWriteWithdrawETH } from 'op-wagmi'
+import { useSimulateProveWithdrawalTransaction, useWriteProveWithdrawalTransaction } from 'op-wagmi'
 import { useState } from 'react'
-import { Address, parseEther } from 'viem'
+import { Hash } from 'viem'
 import { Action, ActionToggle } from './ActionToggle'
 import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 
-const chainIdToExplorer: Record<number, string> = {
-  84531: 'https://goerli.basescan.org',
-  420: 'https://goerli-optimism.etherscan.io',
-}
-
-type WithdrawETHProps = {
+type ProveWithdrawalTransactionProps = {
   selectedChainId: number
 }
 
-export function WithdrawETH({ selectedChainId }: WithdrawETHProps) {
-  const [to, setTo] = useState('')
-  const [amount, setAmount] = useState('')
+export function ProveWithdrawalTransaction({ selectedChainId }: ProveWithdrawalTransactionProps) {
+  const [withdrawalTxHash, setWithdrawalTxHash] = useState('')
   const [action, setAction] = useState<Action>('simulate')
 
-  const { status: simulateStatus, refetch: simulateWithdrawETH } = useSimulateWithdrawETH({
-    args: {
-      to: to as Address,
-      minGasLimit: 100000,
-      amount: parseEther(amount),
+  const { status: simulateStatus, refetch: simulateProveWithdrawalTransaction } = useSimulateProveWithdrawalTransaction(
+    {
+      args: {
+        l1WithdrawalTxHash: withdrawalTxHash as Hash,
+      },
+      l2ChainId: selectedChainId,
+      query: { enabled: false, retry: false },
     },
-    chainId: selectedChainId,
-    query: { enabled: false },
-  })
-  const { data: l2TxHash, status: writeStatus, writeWithdrawETHAsync } = useWriteWithdrawETH()
+  )
+
+  const { data: l1TxHash, status: writeStatus, writeProveWithdrawalTransactionAsync } =
+    useWriteProveWithdrawalTransaction()
 
   const handleClick = async () => {
     if (action === 'simulate') {
-      simulateWithdrawETH()
+      simulateProveWithdrawalTransaction()
     } else {
-      await writeWithdrawETHAsync({
+      await writeProveWithdrawalTransactionAsync({
         args: {
-          to: to as Address,
-          minGasLimit: 100000,
-          amount: parseEther(amount),
+          l1WithdrawalTxHash: withdrawalTxHash as Hash,
         },
-        chainId: selectedChainId,
+        l2ChainId: selectedChainId,
       })
     }
   }
@@ -48,12 +42,16 @@ export function WithdrawETH({ selectedChainId }: WithdrawETHProps) {
   return (
     <div className='flex flex-col space-y-4'>
       <div className='flex flex-col w-full px-16 space-y-4'>
-        <InputGroup label='To' placeholder='0x...' value={to} setValue={setTo} />
-        <InputGroup label='Amount' value={amount} setValue={setAmount} />
+        <InputGroup
+          label='Withdrawal Tx Hash'
+          placeholder='0x...'
+          value={withdrawalTxHash}
+          setValue={setWithdrawalTxHash}
+        />
         <ActionToggle action={action} setAction={setAction} />
         <div className='self-center'>
           <Button onClick={handleClick}>
-            {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Withdraw ETH 🚀`}
+            {`🚀 ${action === 'simulate' ? 'Simulate' : 'Write'} Prove Withdrawal 🚀`}
           </Button>
         </div>
       </div>
@@ -71,16 +69,16 @@ export function WithdrawETH({ selectedChainId }: WithdrawETHProps) {
             <span className='text-white'>Status:</span>
             <span className='text-white'>{writeStatus}</span>
           </div>
-          {l2TxHash && (
+          {l1TxHash && (
             <div className='flex flex-row justify-center space-x-8 items-center w-full'>
-              <span className='text-white'>L2 Tx:</span>
+              <span className='text-white'>L1 Tx:</span>
               <a
                 className='text-blue-500 underline'
                 target='_blank'
                 rel='noreferrer'
-                href={`${chainIdToExplorer[selectedChainId]}/tx/${l2TxHash}`}
+                href={`https://goerli.etherscan.io/tx/${l1TxHash}`}
               >
-                {`${l2TxHash?.slice(0, 8)}...`}
+                {`${l1TxHash?.slice(0, 8)}...`}
               </a>
             </div>
           )}
