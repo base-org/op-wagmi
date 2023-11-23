@@ -18,7 +18,7 @@ export type L2Addresses<chainId = number> = {
 
 export type L2Chain<l1ChainId extends number, l2ChainId extends number> = {
   chainId: l2ChainId
-  l1ChaindId: l1ChainId
+  l1ChainId: l1ChainId
   l1Addresses: L1Addresses<l1ChainId>
   l2Addresses: L2Addresses<l2ChainId>
 }

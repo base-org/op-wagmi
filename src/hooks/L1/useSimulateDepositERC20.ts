@@ -39,12 +39,16 @@ export function useSimulateDepositERC20<
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
 
+  if (!l2Chain) {
+    throw new Error('L2 chain not configured')
+  }
+
   return useSimulateContract({
     address: l2Chain.l1Addresses.l1StandardBridge.address,
     abi: ABI,
     functionName: FUNCTION,
-    args: [args.l1Token, args.l2Token, args.to, args.amount, args?.minGasLimit ?? 0, args?.extraData ?? '0x'],
-    chainId: l2Chain.l1ChaindId,
+    args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+    chainId: l2Chain.l1ChainId,
     query: query as UseSimulateContractParameters['query'],
     ...rest,
   }) as unknown as UseSimulateDepositERC20ReturnType<config, chainId>

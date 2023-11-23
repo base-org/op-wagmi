@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AssetTypeToggle } from './AssetTypeToggle'
 import { NetworkSelector } from './NetworkSelector'
+import { WithdrawERC20 } from './WithdrawERC20'
 import { WithdrawETH } from './WithdrawETH'
 
 const networkToChainId: Record<'optimism' | 'base', number> = {
@@ -17,6 +18,7 @@ export function WithdrawContainer() {
       <span className='text-white'>From</span>
       <NetworkSelector selectedNetwork={selectedNetwork} setSelectedNetwork={setSelectedNetwork} />
       {selectedAssetType === 'eth' && <WithdrawETH selectedChainId={networkToChainId[selectedNetwork]} />}
+      {selectedAssetType === 'erc20' && <WithdrawERC20 selectedChainId={networkToChainId[selectedNetwork]} />}
     </div>
   )
 }

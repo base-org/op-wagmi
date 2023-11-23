@@ -8,6 +8,11 @@ export function useBlockNumberOfLatestL2OutputProposal(
 ) {
   const opConfig = useConfig({ config })
   const l2Chain = opConfig.l2chains[l2ChainId]
+
+  if (!l2Chain) {
+    throw new Error('L2 chain not configured')
+  }
+
   const result = useReadContract({
     abi: l2OutputOracleABI,
     address: l2Chain.l1Addresses.l2OutputOracle.address,
