@@ -56,7 +56,7 @@ export function useSimulateProveWithdrawalTransaction<
   }
 
   const { address } = useAccount()
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChaindId })
+  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })
   const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
 
@@ -98,7 +98,8 @@ export function useSimulateProveWithdrawalTransaction<
         ...args,
       },
       account: address,
-      chainId: l2Chain.l1ChaindId,
+      chainId: l2Chain.l1ChainId,
+      action: 'proveWithdrawalTransaction',
     }),
   }
 

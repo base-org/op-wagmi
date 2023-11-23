@@ -53,7 +53,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
   }
 
   const { address } = useAccount()
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChaindId })
+  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })
   const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
 
@@ -81,7 +81,8 @@ export function useSimulateFinalizeWithdrawalTransaction<
         ...args,
       },
       account: address,
-      chainId: l2Chain.l1ChaindId,
+      chainId: l2Chain.l1ChainId,
+      action: 'finalizeWithdrawalTransaction',
     }),
   }
 

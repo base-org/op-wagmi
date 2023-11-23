@@ -1,7 +1,7 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawERC20Parameters as WriteWithdrawERC20ActionParameters } from 'op-viem/actions'
-import { useWriteContract } from 'wagmi'
+import { useChainId, useWriteContract } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -16,7 +16,8 @@ export type WriteWithdrawERC20Parameters<
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  & Pick<WriteWithdrawERC20ActionParameters, 'args'>
+  // The CrossDomainMessenger will add the gas we need, so we can pass 0 to the contract by default & make the argument optional
+  & { args: Omit<Pick<WriteWithdrawERC20ActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { chainId: number }
 
 export type UseWriteWithdrawERC20Parameters<config extends Config = OpConfig, context = unknown> =
@@ -43,29 +44,46 @@ export function useWriteWithdrawERC20<config extends Config = OpConfig, context 
 ): UseWriteWithdrawERC20ReturnType<config, context> {
   const config = useOpConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
+  const currentChainId = useChainId()
 
   return {
     writeWithdrawERC20: ({ chainId, args, ...rest }: WriteWithdrawERC20Parameters) => {
+      if (currentChainId !== chainId) {
+        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
+      }
+
       const l2Chain = config.l2chains[chainId]
+
+      if (!l2Chain) {
+        throw new Error('L2 chain not configured')
+      }
 
       return writeContract({
         chainId: l2Chain.chainId,
         address: l2Chain.l2Addresses.l2StandardBridge.address,
         abi: ABI,
         functionName: FUNCTION,
-        args: [args.l2Token, args.to, args.amount, args.minGasLimit, args.extraData || '0x'],
+        args: [args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData || '0x'],
         ...rest,
       })
     },
     writeWithdrawERC20Async: ({ chainId, args, ...rest }: WriteWithdrawERC20Parameters) => {
+      if (currentChainId !== chainId) {
+        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
+      }
+
       const l2Chain = config.l2chains[chainId]
+
+      if (!l2Chain) {
+        throw new Error('L2 chain not configured')
+      }
 
       return writeContractAsync({
         chainId: l2Chain.chainId,
         address: l2Chain.l2Addresses.l2StandardBridge.address,
         abi: ABI,
         functionName: FUNCTION,
-        args: [args.l2Token, args.to, args.amount, args.minGasLimit, args.extraData || '0x'],
+        args: [args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData || '0x'],
         ...rest,
       })
     },

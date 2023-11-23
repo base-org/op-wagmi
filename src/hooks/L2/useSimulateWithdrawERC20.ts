@@ -17,7 +17,8 @@ export type UseSimulateWithdrawERC20Parameters<
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  & Pick<SimulateWithdrawERC20Parameters, 'args'>
+  // The CrossDomainMessenger will add the gas we need, so we can pass 0 to the contract by default & make the argument optional
+  & { args: Omit<Pick<SimulateWithdrawERC20Parameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { chainId: number }
 
 export type UseSimulateWithdrawERC20ReturnType<
@@ -39,12 +40,16 @@ export function useSimulateWithdrawERC20<
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[chainId]
 
+  if (!l2Chain) {
+    throw new Error('L2 chain not configured')
+  }
+
   return useSimulateContract({
     address: l2Chain.l2Addresses.l2StandardBridge.address,
     abi: ABI,
     chainId: l2Chain.chainId,
     functionName: FUNCTION,
-    args: [args.l2Token, args.to, args.amount, args.minGasLimit, args.extraData ?? '0x'],
+    args: [args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
     query: query as UseSimulateContractParameters['query'],
     ...rest,
   }) as unknown as UseSimulateWithdrawERC20ReturnType<config, chainId>

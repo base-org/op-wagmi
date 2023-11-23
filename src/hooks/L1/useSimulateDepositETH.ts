@@ -38,20 +38,25 @@ export function useSimulateDepositETH<
 ): UseSimulateDepositETHReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
+
+  if (!l2Chain) {
+    throw new Error('L2 chain not configured')
+  }
+
   const { data: l2GasEstimate } = useEstimateGas({
     chainId: l2ChainId,
     to: args.to,
     value: args.amount,
-    data: args?.data,
+    data: args.data,
   })
 
-  const enabled = Boolean(args?.gasLimit || l2GasEstimate) && (query?.enabled ?? true)
+  const enabled = Boolean(args.gasLimit || l2GasEstimate) && (query?.enabled ?? true)
   return useSimulateContract({
     address: l2Chain.l1Addresses.portal.address,
     abi: ABI,
     functionName: FUNCTION,
-    args: [args.to, args.amount, BigInt(args?.gasLimit ?? l2GasEstimate ?? 0), false, args?.data ?? '0x'],
-    chainId: l2Chain.l1ChaindId,
+    args: [args.to, args.amount, BigInt(args.gasLimit ?? l2GasEstimate ?? 0), false, args.data ?? '0x'],
+    chainId: l2Chain.l1ChainId,
     value: args.amount,
     query: { ...query, enabled } as UseSimulateContractParameters['query'],
     ...rest,

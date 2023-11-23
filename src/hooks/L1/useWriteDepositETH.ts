@@ -6,6 +6,7 @@ import {
   writeDepositETH,
   type WriteDepositETHParameters as WriteDepositETHActionParameters,
 } from 'op-viem/actions'
+import { useChainId } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -51,13 +52,13 @@ async function writeMutation(
   const l2PublicClient = getPublicClient(config, { chainId: l2ChainId })
   const l1Addresses = config.l2chains[l2ChainId].l1Addresses
 
-  const l2GasLimit = args?.gasLimit
+  const l2GasLimit = args.gasLimit
     ?? Number(
       await l2PublicClient.estimateGas({
         account: walletClient.account.address,
         to: args.to,
         value: args.amount,
-        data: args?.data,
+        data: args.data,
       }),
     )
 
@@ -84,12 +85,21 @@ export function useWriteDepositETH<config extends Config = OpConfig, context = u
   args: UseWriteDepositETHParameters<config, context> = {},
 ): UseWriteDepositETHReturnType<config, context> {
   const opConfig = useOpConfig(args)
+  const currentChainId = useChainId()
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
       const l2Chain = opConfig.l2chains[l2ChainId]
 
-      return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChaindId, l2ChainId: l2ChainId, ...rest })
+      if (!l2Chain) {
+        throw new Error('L2 chain not configured')
+      }
+
+      if (currentChainId !== l2Chain.l1ChainId) {
+        throw new Error(`Chain mismatch. Expected ${l2Chain.l1ChainId}, got ${currentChainId}.`)
+      }
+
+      return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChainId, l2ChainId: l2ChainId, ...rest })
     },
     mutationKey: ['writeContract'],
   }
