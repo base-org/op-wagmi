@@ -16,7 +16,7 @@ export function ProveWithdrawalTransaction({ selectedChainId }: ProveWithdrawalT
   const { status: simulateStatus, refetch: simulateProveWithdrawalTransaction } = useSimulateProveWithdrawalTransaction(
     {
       args: {
-        l1WithdrawalTxHash: withdrawalTxHash as Hash,
+        withdrawalTxHash: withdrawalTxHash as Hash,
       },
       l2ChainId: selectedChainId,
       query: { enabled: false, retry: false },
@@ -32,7 +32,7 @@ export function ProveWithdrawalTransaction({ selectedChainId }: ProveWithdrawalT
     } else {
       await writeProveWithdrawalTransactionAsync({
         args: {
-          l1WithdrawalTxHash: withdrawalTxHash as Hash,
+          withdrawalTxHash: withdrawalTxHash as Hash,
         },
         l2ChainId: selectedChainId,
       })

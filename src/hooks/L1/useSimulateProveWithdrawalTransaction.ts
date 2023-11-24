@@ -27,7 +27,7 @@ export type UseSimulateProveWithdrawalTransactionParameters<
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
   & {
     args: {
-      l1WithdrawalTxHash: Hash
+      withdrawalTxHash: Hash
     }
     l2ChainId: number
   }
@@ -55,7 +55,7 @@ export function useSimulateProveWithdrawalTransaction<
     throw new Error('L2 chain not configured')
   }
 
-  const { address } = useAccount()
+  const account = useAccount(rest)
   const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })
   const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
@@ -63,7 +63,7 @@ export function useSimulateProveWithdrawalTransaction<
   const query = {
     async queryFn() {
       const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
-        hash: args.l1WithdrawalTxHash,
+        hash: args.withdrawalTxHash,
       })
 
       const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
@@ -82,7 +82,7 @@ export function useSimulateProveWithdrawalTransaction<
 
       return simulateProveWithdrawalTransaction(l1PublicClient, {
         args: simulateProveWithdrawalTransactionArgs,
-        account: address,
+        account: account.address,
         ...l1Addresses,
       })
     },
@@ -97,13 +97,13 @@ export function useSimulateProveWithdrawalTransaction<
         value: undefined,
         ...args,
       },
-      account: address,
+      account: account.address,
       chainId: l2Chain.l1ChainId,
       action: 'proveWithdrawalTransaction',
     }),
   }
 
-  const enabled = Boolean(address) && (queryOverride?.enabled ?? true)
+  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
   return {
     ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
     queryKey: query.queryKey,

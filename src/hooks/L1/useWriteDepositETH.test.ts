@@ -3,7 +3,7 @@ import { accounts } from '../../_test/constants.js'
 import { renderHook, waitFor } from '../../_test/react.js'
 import { useWriteDepositETH } from './useWriteDepositETH.js'
 
-test(useWriteDepositETH.name, async () => {
+test('useWriteDepositETH', async () => {
   const { result } = renderHook(() => useWriteDepositETH())
 
   // write contract lazily writes

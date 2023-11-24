@@ -16,15 +16,15 @@ function warn(message: string) {
   }
 }
 
-export let forkBlockNumber: bigint
-if (process.env.VITE_ANVIL_BLOCK_NUMBER) {
-  forkBlockNumber = BigInt(Number(process.env.VITE_ANVIL_BLOCK_NUMBER))
-} else {
-  forkBlockNumber = 18136086n
-  warn(
-    `\`VITE_ANVIL_BLOCK_NUMBER\` not found. Falling back to \`${forkBlockNumber}\`.`,
-  )
-}
+// export let forkBlockNumber: bigint
+// if (process.env.VITE_ANVIL_BLOCK_NUMBER) {
+//   forkBlockNumber = BigInt(Number(process.env.VITE_ANVIL_BLOCK_NUMBER))
+// } else {
+//   forkBlockNumber = 18136086n
+//   warn(
+//     `\`VITE_ANVIL_BLOCK_NUMBER\` not found. Falling back to \`${forkBlockNumber}\`.`,
+//   )
+// }
 
 export let forkUrl: string
 if (process.env.VITE_ANVIL_FORK_URL) {
@@ -42,17 +42,17 @@ if (process.env.VITE_ANVIL_BLOCK_TIME) {
   warn(`\`VITE_ANVIL_BLOCK_TIME\` not found. Falling back to \`${blockTime}\`.`)
 }
 
-export let rollupForkBlockNumber: bigint
-if (process.env.VITE_ANVIL_ROLLUP_BLOCK_NUMBER) {
-  rollupForkBlockNumber = BigInt(
-    Number(process.env.VITE_ANVIL_ROLLUP_BLOCK_NUMBER),
-  )
-} else {
-  rollupForkBlockNumber = 3709321n
-  warn(
-    `\`VITE_ANVIL_ROLLUP_BLOCK_NUMBER\` not found. Falling back to \`${rollupForkBlockNumber}\`.`,
-  )
-}
+// export let rollupForkBlockNumber: bigint
+// if (process.env.VITE_ANVIL_ROLLUP_BLOCK_NUMBER) {
+//   rollupForkBlockNumber = BigInt(
+//     Number(process.env.VITE_ANVIL_ROLLUP_BLOCK_NUMBER),
+//   )
+// } else {
+//   rollupForkBlockNumber = 3709321n
+//   warn(
+//     `\`VITE_ANVIL_ROLLUP_BLOCK_NUMBER\` not found. Falling back to \`${rollupForkBlockNumber}\`.`,
+//   )
+// }
 
 export let rollupForkUrl: string
 if (process.env.VITE_ANVIL_ROLLUP_FORK_URL) {

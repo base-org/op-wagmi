@@ -17,7 +17,7 @@ export function FinalizeWithdrawalTransaction({ selectedChainId }: FinalizeWithd
     useSimulateFinalizeWithdrawalTransaction(
       {
         args: {
-          l1WithdrawalTxHash: withdrawalTxHash as Hash,
+          withdrawalTxHash: withdrawalTxHash as Hash,
         },
         l2ChainId: selectedChainId,
         query: { enabled: false, retry: false },
@@ -33,7 +33,7 @@ export function FinalizeWithdrawalTransaction({ selectedChainId }: FinalizeWithd
     } else {
       await writeFinalizeWithdrawalTransactionAsync({
         args: {
-          l1WithdrawalTxHash: withdrawalTxHash as Hash,
+          withdrawalTxHash: withdrawalTxHash as Hash,
         },
         l2ChainId: selectedChainId,
       })

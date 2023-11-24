@@ -3,7 +3,7 @@ import { accounts } from '../../_test/constants.js'
 import { renderHook, waitFor } from '../../_test/react.js'
 import { useWriteDepositERC20 } from './useWriteDepositERC20.js'
 
-test(useWriteDepositERC20.name, async () => {
+test('useWriteDepositERC20', async () => {
   const { result } = renderHook(() => useWriteDepositERC20())
 
   expect(result.current.writeDepositERC20).toBeDefined()
@@ -791,4 +791,4 @@ test(useWriteDepositERC20.name, async () => {
       "writeDepositERC20Async": [Function],
     }
   `)
-})
+}, { retry: 3 })

@@ -22,7 +22,7 @@ export type WriteFinalizeWithdrawalTransactionParameters<
   chainId extends config['chains'][number]['id'] = number,
 > = WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId> & {
   args: {
-    l1WithdrawalTxHash: Hash
+    withdrawalTxHash: Hash
   }
   l2ChainId: number
 }
@@ -62,7 +62,7 @@ async function writeMutation(
   const l1Addresses = config.l2chains[l2ChainId].l1Addresses
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
-    hash: args.l1WithdrawalTxHash,
+    hash: args.withdrawalTxHash,
   })
 
   await simulateFinalizeWithdrawalTransaction(l1PublicClient, {

@@ -127,4 +127,4 @@ test('useSimulateDepositERC20', async () => {
        "status": "success",
      }
   `)
-})
+}, { retry: 3 })

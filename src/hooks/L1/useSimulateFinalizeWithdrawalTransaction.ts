@@ -21,7 +21,7 @@ export type UseSimulateFinalizeWithdrawalTransactionParameters<
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
   & {
     args: {
-      l1WithdrawalTxHash: Hash
+      withdrawalTxHash: Hash
     }
     l2ChainId: number
   }
@@ -60,7 +60,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
   const query = {
     async queryFn() {
       const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
-        hash: args.l1WithdrawalTxHash,
+        hash: args.withdrawalTxHash,
       })
 
       return simulateFinalizeWithdrawalTransaction(l1PublicClient, {

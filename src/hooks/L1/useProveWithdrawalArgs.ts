@@ -14,9 +14,9 @@ import { useGetL2OutputIndexAfter } from './useGetL2OutputIndexAfter.js'
 export function useProveWithdrawalArgs({
   l2ChainId,
   config,
-  l1WithdrawalTxHash,
+  withdrawalTxHash,
 }: {
-  l1WithdrawalTxHash: Hash
+  withdrawalTxHash: Hash
   l2ChainId: number
   config?: Config
 }) {
@@ -47,7 +47,7 @@ export function useProveWithdrawalArgs({
   })
 
   const { data: withdrawalReceipt } = useWaitForTransactionReceipt({
-    hash: l1WithdrawalTxHash,
+    hash: withdrawalTxHash,
     chainId: l2Chain.chainId,
   })
 

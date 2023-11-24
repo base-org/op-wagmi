@@ -3,10 +3,10 @@ import { startProxy } from '@viem/anvil'
 
 import {
   blockTime,
-  forkBlockNumber,
+  // forkBlockNumber,
   forkUrl,
   rollupBlockTime,
-  rollupForkBlockNumber,
+  // rollupForkBlockNumber,
   rollupForkUrl,
 } from './constants.js'
 
@@ -37,7 +37,8 @@ export default async function() {
     port: 8545,
     options: {
       forkUrl,
-      forkBlockNumber,
+      // TODO: Figure out forking / archive node issues
+      // forkBlockNumber,
       blockTime,
     },
   })
@@ -45,7 +46,8 @@ export default async function() {
     port: 8546,
     options: {
       forkUrl: rollupForkUrl,
-      forkBlockNumber: rollupForkBlockNumber,
+      // TODO: Figure out forking / archive node issues
+      // forkBlockNumber: rollupForkBlockNumber,
       blockTime: rollupBlockTime,
     },
   })

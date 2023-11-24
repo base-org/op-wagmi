@@ -9,23 +9,23 @@ import { getRpcUrls } from './utils.js'
 const mainnet = {
   ...viem_mainnet,
   ...getRpcUrls({ port: 8545 }),
-  fork: {
-    blockNumber: process.env.VITE_MAINNET_FORK_BLOCK_NUMBER
-      ? BigInt(Number(process.env.VITE_MAINNET_FORK_BLOCK_NUMBER))
-      : 18136086n,
-    url: process.env.VITE_MAINNET_FORK_URL ?? 'https://cloudflare-eth.com',
-  },
+  // fork: {
+  //   blockNumber: process.env.VITE_MAINNET_FORK_BLOCK_NUMBER
+  //     ? BigInt(Number(process.env.VITE_MAINNET_FORK_BLOCK_NUMBER))
+  //     : 18136086n,
+  //   url: process.env.VITE_MAINNET_FORK_URL ?? 'https://cloudflare-eth.com',
+  // },
 }
 
 const base = {
   ...viem_base,
   ...getRpcUrls({ port: 8546 }),
-  fork: {
-    blockNumber: process.env.VITE_OPTIMISM_FORK_BLOCK_NUMBER
-      ? BigInt(Number(process.env.VITE_OPTIMISM_FORK_BLOCK_NUMBER))
-      : 5940037n,
-    url: process.env.VITE_OPTIMISM_FORK_URL ?? 'https://mainnet.base.org',
-  },
+  // fork: {
+  //   blockNumber: process.env.VITE_OPTIMISM_FORK_BLOCK_NUMBER
+  //     ? BigInt(Number(process.env.VITE_OPTIMISM_FORK_BLOCK_NUMBER))
+  //     : 3960000n,
+  //   url: process.env.VITE_OPTIMISM_FORK_URL ?? 'https://mainnet.base.org',
+  // },
 }
 
 export const config: OpConfig = {
