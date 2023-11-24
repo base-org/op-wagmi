@@ -21,7 +21,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run tests
-        run: pnpm test:cov
+        run: CI=true pnpm test:cov
       
       # Adds coverage to github pr
       - name: 'Report Coverage'
