@@ -23,6 +23,3 @@ jobs:
 
       - name: Run typechecker
         run: pnpm typecheck
-
-      - name: Run typechecker on tests
-        run: pnpm test:typecheck

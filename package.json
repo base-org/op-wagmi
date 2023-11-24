@@ -91,14 +91,15 @@
     "prepare": "npx simple-git-hooks"
   },
   "dependencies": {
-    "@eth-optimism/contracts-ts": "^0.15.0"
+    "@eth-optimism/contracts-ts": "^0.15.0",
+    "@testing-library/react-hooks": "^8.0.1"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
     "@wagmi/core": "beta",
     "op-viem": "1.3.0-alpha",
     "typescript": ">=5.0.4",
-    "viem": "2.0.0-beta.0",
+    "viem": "beta",
     "wagmi": "beta"
   },
   "peerDependenciesMeta": {
