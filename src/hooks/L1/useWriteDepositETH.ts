@@ -6,7 +6,6 @@ import {
   writeDepositETH,
   type WriteDepositETHParameters as WriteDepositETHActionParameters,
 } from 'op-viem/actions'
-import { useChainId } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -85,7 +84,6 @@ export function useWriteDepositETH<config extends Config = OpConfig, context = u
   args: UseWriteDepositETHParameters<config, context> = {},
 ): UseWriteDepositETHReturnType<config, context> {
   const opConfig = useOpConfig(args)
-  const currentChainId = useChainId()
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
@@ -93,10 +91,6 @@ export function useWriteDepositETH<config extends Config = OpConfig, context = u
 
       if (!l2Chain) {
         throw new Error('L2 chain not configured')
-      }
-
-      if (currentChainId !== l2Chain.l1ChainId) {
-        throw new Error(`Chain mismatch. Expected ${l2Chain.l1ChainId}, got ${currentChainId}.`)
       }
 
       return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChainId, l2ChainId: l2ChainId, ...rest })

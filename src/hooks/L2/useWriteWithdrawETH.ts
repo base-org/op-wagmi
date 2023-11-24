@@ -1,7 +1,7 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawETHParameters as WriteWithdrawETHActionParameters } from 'op-viem/actions'
-import { useChainId, useWriteContract } from 'wagmi'
+import { useAccount, useWriteContract } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -45,14 +45,10 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
 ): UseWriteWithdrawETHReturnType<config, context> {
   const config = useOpConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
-  const currentChainId = useChainId()
+  const account = useAccount(args)
 
   return {
     writeWithdrawETH: ({ chainId, args, ...rest }: WriteWithdrawETHParameters) => {
-      if (currentChainId !== chainId) {
-        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
-      }
-
       const l2Chain = config.l2chains[chainId]
 
       if (!l2Chain) {
@@ -66,14 +62,11 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
         functionName: FUNCTION,
         args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
         value: args.amount,
+        account: account.address,
         ...rest,
       })
     },
     writeWithdrawETHAsync: ({ chainId, args, ...rest }: WriteWithdrawETHParameters) => {
-      if (currentChainId !== chainId) {
-        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
-      }
-
       const l2Chain = config.l2chains[chainId]
 
       if (!l2Chain) {
@@ -87,6 +80,7 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
         functionName: FUNCTION,
         args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
         value: args.amount,
+        account: account.address,
         ...rest,
       })
     },

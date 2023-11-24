@@ -3,7 +3,7 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import type { Config } from '@wagmi/core'
 import { type SimulateWithdrawERC20Parameters } from 'op-viem/actions'
-import { useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { useAccount, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
@@ -39,6 +39,7 @@ export function useSimulateWithdrawERC20<
 ): UseSimulateWithdrawERC20ReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[chainId]
+  const account = useAccount(rest)
 
   if (!l2Chain) {
     throw new Error('L2 chain not configured')
@@ -51,6 +52,7 @@ export function useSimulateWithdrawERC20<
     functionName: FUNCTION,
     args: [args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
     query: query as UseSimulateContractParameters['query'],
+    account: account.address,
     ...rest,
   }) as unknown as UseSimulateWithdrawERC20ReturnType<config, chainId>
 }

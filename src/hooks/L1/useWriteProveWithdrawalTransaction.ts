@@ -9,7 +9,7 @@ import {
   writeProveWithdrawalTransaction,
 } from 'op-viem/actions'
 import type { Hash } from 'viem'
-import { type Config, useChainId } from 'wagmi'
+import { type Config } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
@@ -25,7 +25,7 @@ export type WriteProveWithdrawalTransactionParameters<
   chainId extends config['chains'][number]['id'] = number,
 > = WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId> & {
   args: {
-    l1WithdrawalTxHash: Hash
+    withdrawalTxHash: Hash
   }
   l2ChainId: number
 }
@@ -65,7 +65,7 @@ async function writeMutation(
   const l1Addresses = config.l2chains[l2ChainId].l1Addresses
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
-    hash: args.l1WithdrawalTxHash,
+    hash: args.withdrawalTxHash,
   })
 
   const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
@@ -105,7 +105,6 @@ export function useWriteProveWithdrawalTransaction<config extends Config = OpCon
   args: UseWriteProveWithdrawalTransactionParameters<config, context> = {},
 ): UseWriteProveWithdrawalTransactionReturnType<config, context> {
   const opConfig = useOpConfig(args)
-  const currentChainId = useChainId()
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteProveWithdrawalTransactionParameters) {
@@ -113,10 +112,6 @@ export function useWriteProveWithdrawalTransaction<config extends Config = OpCon
 
       if (!l2Chain) {
         throw new Error('L2 chain not configured')
-      }
-
-      if (currentChainId !== l2Chain.l1ChainId) {
-        throw new Error(`Chain mismatch. Expected ${l2Chain.l1ChainId}, got ${currentChainId}.`)
       }
 
       return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChainId, l2ChainId: l2ChainId, ...rest })

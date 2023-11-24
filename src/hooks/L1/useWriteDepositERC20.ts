@@ -1,7 +1,7 @@
 import { l1StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteDepositERC20Parameters as WriteDepositERC20ActionParameters } from 'op-viem/actions'
-import { useChainId, useWriteContract } from 'wagmi'
+import { useAccount, useWriteContract } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -44,7 +44,7 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
 ): UseWriteDepositERC20ReturnType<config, context> {
   const config = useOpConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
-  const currentChainId = useChainId()
+  const account = useAccount(args)
 
   return {
     writeDepositERC20: ({ l2ChainId, args, ...rest }: WriteDepositERC20Parameters) => {
@@ -54,16 +54,13 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
         throw new Error('L2 chain not configured')
       }
 
-      if (currentChainId !== l2Chain.l1ChainId) {
-        throw new Error(`Chain mismatch. Expected ${l2Chain.l1ChainId}, got ${currentChainId}.`)
-      }
-
       return writeContract({
         chainId: l2Chain.l1ChainId,
         address: l2Chain.l1Addresses.l1StandardBridge.address,
         abi: ABI,
         functionName: FUNCTION,
         args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+        account: account.address,
         ...rest,
       })
     },
@@ -74,16 +71,13 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
         throw new Error('L2 chain not configured')
       }
 
-      if (currentChainId !== l2Chain.l1ChainId) {
-        throw new Error(`Chain mismatch. Expected ${l2Chain.l1ChainId}, got ${currentChainId}.`)
-      }
-
       return writeContractAsync({
         chainId: l2Chain.l1ChainId,
         address: l2Chain.l1Addresses.l1StandardBridge.address,
         abi: ABI,
         functionName: FUNCTION,
         args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+        account: account.address,
         ...rest,
       })
     },

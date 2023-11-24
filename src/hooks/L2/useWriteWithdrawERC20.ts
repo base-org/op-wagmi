@@ -1,7 +1,7 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawERC20Parameters as WriteWithdrawERC20ActionParameters } from 'op-viem/actions'
-import { useChainId, useWriteContract } from 'wagmi'
+import { useWriteContract } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -44,14 +44,9 @@ export function useWriteWithdrawERC20<config extends Config = OpConfig, context 
 ): UseWriteWithdrawERC20ReturnType<config, context> {
   const config = useOpConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
-  const currentChainId = useChainId()
 
   return {
     writeWithdrawERC20: ({ chainId, args, ...rest }: WriteWithdrawERC20Parameters) => {
-      if (currentChainId !== chainId) {
-        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
-      }
-
       const l2Chain = config.l2chains[chainId]
 
       if (!l2Chain) {
@@ -68,10 +63,6 @@ export function useWriteWithdrawERC20<config extends Config = OpConfig, context 
       })
     },
     writeWithdrawERC20Async: ({ chainId, args, ...rest }: WriteWithdrawERC20Parameters) => {
-      if (currentChainId !== chainId) {
-        throw new Error(`Chain mismatch. Expected ${chainId}, got ${currentChainId}.`)
-      }
-
       const l2Chain = config.l2chains[chainId]
 
       if (!l2Chain) {
