@@ -2,7 +2,7 @@
 
 import { l1StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositERC20Parameters } from 'op-viem/actions'
-import { type Config, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { type Config, useAccount, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
@@ -38,6 +38,7 @@ export function useSimulateDepositERC20<
 ): UseSimulateDepositERC20ReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
+  const account = useAccount(rest)
 
   if (!l2Chain) {
     throw new Error('L2 chain not configured')
@@ -50,6 +51,7 @@ export function useSimulateDepositERC20<
     args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
     chainId: l2Chain.l1ChainId,
     query: query as UseSimulateContractParameters['query'],
+    account: account.address,
     ...rest,
   }) as unknown as UseSimulateDepositERC20ReturnType<config, chainId>
 }

@@ -10,7 +10,7 @@ import { createElement } from 'react'
 import { WagmiProvider } from 'wagmi'
 export { act, cleanup } from '@testing-library/react'
 
-import { config } from './config.js'
+import { connectedConfig } from './config.js'
 
 export const queryClient = new QueryClient()
 
@@ -34,7 +34,7 @@ export function renderHook<Result, Props>(
 ): RenderHookResult<Result, Props> {
   queryClient.clear()
   return rtl_renderHook(render, {
-    wrapper: createWrapper(WagmiProvider, { config, reconnectOnMount: false }),
+    wrapper: createWrapper(WagmiProvider, { config: connectedConfig, reconnectOnMount: false }),
     ...options,
   })
 }

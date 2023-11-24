@@ -1,14 +1,17 @@
 import { expect, test } from 'vitest'
 import { accounts } from '../../_test/constants.js'
 import { renderHook, waitFor } from '../../_test/react.js'
-import { useSimulateDepositETH } from './useSimulateDepositETH.js'
+import { useSimulateDepositERC20 } from './useSimulateDepositERC20.js'
 
-test('useSimulateDepositETH', async () => {
+test('useSimulateDepositERC20', async () => {
   const { result } = renderHook(() =>
-    useSimulateDepositETH({
+    useSimulateDepositERC20({
       args: {
+        l1Token: '0xbe9895146f7af43049ca1c1ae358b0541ea49704',
+        l2Token: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
         to: accounts[0],
-        amount: 1n,
+        amount: 0n,
+        extraData: '0x',
       },
       l2ChainId: 8453,
       dataSuffix: '0x1234',
@@ -27,33 +30,38 @@ test('useSimulateDepositETH', async () => {
                "inputs": [
                  {
                    "internalType": "address",
+                   "name": "_l1Token",
+                   "type": "address",
+                 },
+                 {
+                   "internalType": "address",
+                   "name": "_l2Token",
+                   "type": "address",
+                 },
+                 {
+                   "internalType": "address",
                    "name": "_to",
                    "type": "address",
                  },
                  {
                    "internalType": "uint256",
-                   "name": "_value",
+                   "name": "_amount",
                    "type": "uint256",
                  },
                  {
-                   "internalType": "uint64",
-                   "name": "_gasLimit",
-                   "type": "uint64",
-                 },
-                 {
-                   "internalType": "bool",
-                   "name": "_isCreation",
-                   "type": "bool",
+                   "internalType": "uint32",
+                   "name": "_minGasLimit",
+                   "type": "uint32",
                  },
                  {
                    "internalType": "bytes",
-                   "name": "_data",
+                   "name": "_extraData",
                    "type": "bytes",
                  },
                ],
-               "name": "depositTransaction",
+               "name": "depositERC20To",
                "outputs": [],
-               "stateMutability": "payable",
+               "stateMutability": "nonpayable",
                "type": "function",
              },
            ],
@@ -61,18 +69,18 @@ test('useSimulateDepositETH', async () => {
              "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
              "type": "json-rpc",
            },
-           "address": "0x49048044D57e1C92A77f79988d21Fa8fAF74E97e",
+           "address": "0x3154Cf16ccdb4C6d922629664174b904d80F2C35",
            "args": [
+             "0xbe9895146f7af43049ca1c1ae358b0541ea49704",
+             "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
              "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-             1n,
-             21000n,
-             false,
+             0n,
+             0,
              "0x",
            ],
            "chainId": 1,
            "dataSuffix": "0x1234",
-           "functionName": "depositTransaction",
-           "value": 1n,
+           "functionName": "depositERC20To",
          },
          "result": undefined,
        },
@@ -101,18 +109,18 @@ test('useSimulateDepositETH', async () => {
          "simulateContract",
          {
            "account": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-           "address": "0x49048044D57e1C92A77f79988d21Fa8fAF74E97e",
+           "address": "0x3154Cf16ccdb4C6d922629664174b904d80F2C35",
            "args": [
+             "0xbe9895146f7af43049ca1c1ae358b0541ea49704",
+             "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
              "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-             1n,
-             21000n,
-             false,
+             0n,
+             0,
              "0x",
            ],
            "chainId": 1,
            "dataSuffix": "0x1234",
-           "functionName": "depositTransaction",
-           "value": 1n,
+           "functionName": "depositERC20To",
          },
        ],
        "refetch": [Function],

@@ -2,7 +2,7 @@
 
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositETHParameters } from 'op-viem/actions'
-import { type Config, useEstimateGas, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { type Config, useAccount, useEstimateGas, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
@@ -38,6 +38,7 @@ export function useSimulateDepositETH<
 ): UseSimulateDepositETHReturnType<config, chainId> {
   const opConfig = useOpConfig(rest)
   const l2Chain = opConfig.l2chains[l2ChainId]
+  const account = useAccount(rest)
 
   if (!l2Chain) {
     throw new Error('L2 chain not configured')
@@ -48,6 +49,7 @@ export function useSimulateDepositETH<
     to: args.to,
     value: args.amount,
     data: args.data,
+    account: account.address,
   })
 
   const enabled = Boolean(args.gasLimit || l2GasEstimate) && (query?.enabled ?? true)
@@ -59,6 +61,7 @@ export function useSimulateDepositETH<
     chainId: l2Chain.l1ChainId,
     value: args.amount,
     query: { ...query, enabled } as UseSimulateContractParameters['query'],
+    account: account.address,
     ...rest,
   }) as unknown as UseSimulateDepositETHReturnType<config, chainId>
 }
