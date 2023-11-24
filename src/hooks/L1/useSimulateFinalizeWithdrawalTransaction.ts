@@ -52,7 +52,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
     throw new Error('L2 chain not configured')
   }
 
-  const { address } = useAccount()
+  const account = useAccount(rest)
   const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })
   const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
@@ -65,7 +65,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
 
       return simulateFinalizeWithdrawalTransaction(l1PublicClient, {
         withdrawal: withdrawalMessages.messages[0],
-        account: address,
+        account: account.address,
         ...l1Addresses,
       })
     },
@@ -80,13 +80,13 @@ export function useSimulateFinalizeWithdrawalTransaction<
         value: undefined,
         ...args,
       },
-      account: address,
+      account: account.address,
       chainId: l2Chain.l1ChainId,
       action: 'finalizeWithdrawalTransaction',
     }),
   }
 
-  const enabled = Boolean(address) && (queryOverride?.enabled ?? true)
+  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
   return {
     ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
     queryKey: query.queryKey,
