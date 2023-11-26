@@ -24,6 +24,20 @@ export default defineConfig({
           { text: 'Examples', link: '/docs/examples' },
         ],
       },
+      {
+        text: 'Hooks',
+        items: [
+          {
+            text: 'L1',
+            items: [
+              {
+                text: 'useSimulateDepositETH',
+                link: '/docs/hooks/L1/useSimulateDepositETH',
+              },
+            ],
+          },
+        ],
+      },
     ],
 
     socialLinks: [
