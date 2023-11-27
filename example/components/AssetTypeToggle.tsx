@@ -22,7 +22,7 @@ export function AssetTypeToggle({ selectedAssetType, setSelectedAssetType }: Ass
         }`}
         onClick={() => setSelectedAssetType('erc20')}
       >
-        ERC-20
+        ERC20
       </button>
     </div>
   )

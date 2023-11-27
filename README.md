@@ -1,6 +1,12 @@
-# OP Wagmi
+<br />
 
-Wagmi hooks for OP Stack Chains
+<h1 align="center">
+  OP Wagmi
+</h1>
+
+<p align="center">
+  Wagmi hooks for OP Stack Chains
+<p>
 
 <!-- Badge row 1 - status -->
 
@@ -28,10 +34,6 @@ Wagmi hooks for OP Stack Chains
 - Simplifies cross L1 & L2 interactions
 - TypeScript ready
 - Test suite running against [forked](https://ethereum.org/en/glossary/#fork) Ethereum network
-
-## Overview
-
-## Community
 
 ## Contributing
 
