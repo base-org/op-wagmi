@@ -1,5 +1,13 @@
 # example
 
+## 0.1.2
+
+### Patch Changes
+
+- 1b95034: Add docs
+- Updated dependencies [1b95034]
+  - op-wagmi@0.1.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/base-org/op-wagmi.git"
   },
-  "version": "0.0.2",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
