@@ -6,12 +6,17 @@ import { DepositContainer } from '@/components/DepositContainer'
 import { FinalizeContainer } from '@/components/FinalizeContainer'
 import { ProveContainer } from '@/components/ProveContainer'
 import { WithdrawContainer } from '@/components/WithdrawContainer'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
   const [action, setAction] = useState<'deposit' | 'withdraw' | 'prove' | 'finalize'>('deposit')
+  const [isClient, setIsClient] = useState(false)
 
-  return (
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  return (isClient && (
     <main className='flex min-h-screen flex-col items-center justify-center p-24 space-y-16'>
       <span className='text-4xl font-bold text-white'>🔴🔵 Superchain Bridge 🔵🔴</span>
       <ConnectButton />
@@ -23,5 +28,5 @@ export default function Home() {
         {action === 'finalize' && <FinalizeContainer />}
       </div>
     </main>
-  )
+  ))
 }

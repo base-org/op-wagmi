@@ -5,6 +5,6 @@
     "./src/index.ts"
   ],
   "plugin": ["typedoc-plugin-markdown"],
-  "gitRevision": "main",
+  "gitRevision": "master",
   "publicPath": "/reference/"
 }

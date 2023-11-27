@@ -2,7 +2,7 @@
 
 Simulates a deposit of ETH to L2.
 
-```ts [example.ts]
+```tsx [example.tsx]
 import { useSimulateDepositETH } from 'op-wagmi'
 
 function App() {
@@ -16,31 +16,36 @@ function App() {
 }
 ```
 
-## Return Value
-
-Returns wagmi's [useSimulateContract return type](https://beta.wagmi.sh/react/api/hooks/useSimulateContract#return-type).
-
 ## Parameters
 
 ### args
 
 - #### to
-  - **Type:** `Address`
-  - The address to deposit the tokens to.
+  `Address`
+
+  The address to deposit the ETH to.
 
 - #### amount
-  - **Type:** `bigint`
-  - The amount of ETH to deposit.
+  `bigint`
+
+  The amount of ETH to deposit.
 
 - #### gasLimit (optional)
-  - **Type:** `number`
-  - The minimum gas limit to use for the deposit transaction.
+  `number`
+
+  The minimum gas limit to use for the deposit transaction.
 
 - #### data (optional)
-  - **Type:** `Hex`
-  - Data to include in the transaction.
+  `Hex`
+
+  Data to include in the transaction.
 
 ### l2ChainId
 
-- **Type:** `number`
-- The chain ID of the chain you want to deposit to.
+`number`
+
+The chain ID of the chain you want to deposit to.
+
+## Return Value
+
+Returns wagmi's [useSimulateContract return type](https://beta.wagmi.sh/react/api/hooks/useSimulateContract#return-type).
