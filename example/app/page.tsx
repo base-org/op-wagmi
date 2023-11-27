@@ -9,8 +9,8 @@ import { WithdrawContainer } from '@/components/WithdrawContainer'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const [isClient, setIsClient] = useState(false)
   const [action, setAction] = useState<'deposit' | 'withdraw' | 'prove' | 'finalize'>('deposit')
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)

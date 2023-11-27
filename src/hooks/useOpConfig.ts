@@ -22,7 +22,10 @@ const chains = { 8453: base, 84531: baseGoerli, 420: optimismGoerli, 10: optimis
 export function useOpConfig<config extends Config>(
   parameters: UseConfigParameters<config> = {},
 ): UseConfigReturnType<OpConfig> {
-  const config: UseConfigReturnType<OpConfig> = { l2chains: chains, ...(parameters.config ?? useConfig(parameters)) }
+  const config: UseConfigReturnType<OpConfig> = {
+    ...useConfig(parameters),
+    l2chains: { ...chains, ...(parameters?.config as OpConfig)?.l2chains },
+  }
 
   // TODO: Return a better error here
   if (!config) throw new Error('No Wagmi Context provider found')
