@@ -1,5 +1,12 @@
 # example
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [8ea3955]
+  - op-wagmi@0.2.1
+
 ## 0.1.3
 
 ### Patch Changes
