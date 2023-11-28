@@ -37,7 +37,7 @@ Config to use instead of retrieving from the from nearest WagmiProvider.
 
 ### writeDepositERC20
 
-`(variables: WriteDepositERC20Parameters) => void`
+`(variables: WriteDepositERC20Parameters, { onSuccess, onSettled, onError }) => void`
 
 The mutation function you can call with variables to trigger the deposit.
 
@@ -79,9 +79,26 @@ The mutation function you can call with variables to trigger the deposit.
 
     The chain ID of the chain you want to deposit to.
 
+- #### options (optional)
+  - ##### onSuccess
+    `(data: WriteContractReturnType, variables: WriteDepositERC20Parameters, context: TContext) => void`
+
+    This function will fire when the mutation is successful and will be passed the mutation's result.
+
+  - ##### onError
+    `(error: WriteContractErrorType, variables: WriteDepositERC20Parameters, context: TContext | undefined) => void`
+
+    This function will fire if the mutation encounters an error and will be passed the error.
+
+  - ##### onSettled
+    `(data: WriteContractReturnType | undefined, error: WriteContractErrorType | null, variables: WriteDepositERC20Parameters, context: TContext | undefined) => void`
+
+    - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+    - If you make multiple requests, onSuccess will fire only after the latest call you've made.
+
 ### writeDepositERC20Async
 
-`(variables: WriteDepositERC20Parameters) => Promise<WriteContractReturnType>`
+`(variables: WriteDepositERC20Parameters, { onSuccess, onSettled, onError }) => Promise<WriteContractReturnType>`
 
 Similar to writeDepositERC20 but returns a promise which can be awaited.
 
@@ -122,5 +139,22 @@ Similar to writeDepositERC20 but returns a promise which can be awaited.
     `number`
 
     The chain ID of the chain you want to deposit to.
+
+- #### options (optional)
+  - ##### onSuccess
+    `(data: WriteContractReturnType, variables: WriteDepositERC20Parameters, context: TContext) => void`
+
+    This function will fire when the mutation is successful and will be passed the mutation's result.
+
+  - ##### onError
+    `(error: WriteContractErrorType, variables: WriteDepositERC20Parameters, context: TContext | undefined) => void`
+
+    This function will fire if the mutation encounters an error and will be passed the error.
+
+  - ##### onSettled
+    `(data: WriteContractReturnType | undefined, error: WriteContractErrorType | null, variables: WriteDepositERC20Parameters, context: TContext | undefined) => void`
+
+    - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+    - If you make multiple requests, onSuccess will fire only after the latest call you've made.
 
 ### The rest of wagmi's [useWriteContract return type](https://beta.wagmi.sh/react/api/hooks/useWrtieContract#return-type) (except `writeContract` and `writeContractAsync`).

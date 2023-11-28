@@ -35,7 +35,7 @@ Config to use instead of retrieving from the from nearest WagmiProvider.
 
 ### writeProveWithdrawalTransaction
 
-`(variables: WriteProveWithdrawalTransactionParameters) => void`
+`(variables: WriteProveWithdrawalTransactionParameters, { onSuccess, onSettled, onError }) => void`
 
 The mutation function you can call with variables to trigger proving the provided withdrawal.
 
@@ -52,9 +52,26 @@ The mutation function you can call with variables to trigger proving the provide
 
     The chain ID of the chain you are withdrawing from.
 
+- #### options (optional)
+  - ##### onSuccess
+    `(data: WriteContractReturnType, variables: WriteProveWithdrawalTransactionParameters, context: TContext) => void`
+
+    This function will fire when the mutation is successful and will be passed the mutation's result.
+
+  - ##### onError
+    `(error: WriteContractErrorType, variables: WriteProveWithdrawalTransactionParameters, context: TContext | undefined) => void`
+
+    This function will fire if the mutation encounters an error and will be passed the error.
+
+  - ##### onSettled
+    `(data: WriteContractReturnType | undefined, error: WriteContractErrorType | null, variables: WriteProveWithdrawalTransactionParameters, context: TContext | undefined) => void`
+
+    - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+    - If you make multiple requests, onSuccess will fire only after the latest call you've made.
+
 ### writeProveWithdrawalTransactionAsync
 
-`(variables: WriteProveWithdrawalTransactionParameters) => Promise<WriteContractReturnType>`
+`(variables: WriteProveWithdrawalTransactionParameters, { onSuccess, onSettled, onError }) => Promise<WriteContractReturnType>`
 
 Similar to writeProveWithdrawalTransaction but returns a promise which can be awaited.
 
@@ -70,5 +87,22 @@ Similar to writeProveWithdrawalTransaction but returns a promise which can be aw
     `number`
 
     The chain ID of the chain you are withdrawing from.
+
+- #### options (optional)
+  - ##### onSuccess
+    `(data: WriteContractReturnType, variables: WriteProveWithdrawalTransactionParameters, context: TContext) => void`
+
+    This function will fire when the mutation is successful and will be passed the mutation's result.
+
+  - ##### onError
+    `(error: WriteContractErrorType, variables: WriteProveWithdrawalTransactionParameters, context: TContext | undefined) => void`
+
+    This function will fire if the mutation encounters an error and will be passed the error.
+
+  - ##### onSettled
+    `(data: WriteContractReturnType | undefined, error: WriteContractErrorType | null, variables: WriteProveWithdrawalTransactionParameters, context: TContext | undefined) => void`
+
+    - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+    - If you make multiple requests, onSuccess will fire only after the latest call you've made.
 
 ### The rest of wagmi's [useWriteContract return type](https://beta.wagmi.sh/react/api/hooks/useWrtieContract#return-type) (except `writeContract` and `writeContractAsync`).
