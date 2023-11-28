@@ -1,7 +1,9 @@
 import { l1StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteDepositERC20Parameters as WriteDepositERC20ActionParameters } from 'op-viem/actions'
+import type { ContractFunctionArgs } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
+import type { WriteContractVariables } from 'wagmi/query'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -43,44 +45,69 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
   args: UseWriteDepositERC20Parameters<config, context> = {},
 ): UseWriteDepositERC20ReturnType<config, context> {
   const config = useOpConfig(args)
-  const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
+  const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
   const account = useAccount(args)
 
+  const writeDepositERC20: UseWriteDepositERC20ReturnType<config, context>['writeDepositERC20'] = (
+    { l2ChainId, args, ...rest },
+    options,
+  ) => {
+    const l2Chain = config.l2chains[l2ChainId]
+
+    if (!l2Chain) {
+      throw new Error('L2 chain not configured')
+    }
+
+    return writeContract(
+      {
+        chainId: l2Chain.l1ChainId,
+        address: l2Chain.l1Addresses.l1StandardBridge.address,
+        abi: ABI,
+        functionName: FUNCTION,
+        args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+        account: account.address,
+        ...rest,
+      } as unknown as WriteContractVariables<
+        typeof ABI,
+        typeof FUNCTION,
+        ContractFunctionArgs<typeof ABI, 'nonpayable', typeof FUNCTION>,
+        config,
+        config['chains'][number]['id']
+      >,
+      options,
+    )
+  }
+
+  const writeDepositERC20Async: UseWriteDepositERC20ReturnType<config, context>['writeDepositERC20Async'] = (
+    { l2ChainId, args, ...rest },
+    options,
+  ) => {
+    const l2Chain = config.l2chains[l2ChainId]
+
+    if (!l2Chain) {
+      throw new Error('L2 chain not configured')
+    }
+
+    return writeContractAsync({
+      chainId: l2Chain.l1ChainId,
+      address: l2Chain.l1Addresses.l1StandardBridge.address,
+      abi: ABI,
+      functionName: FUNCTION,
+      args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+      account: account.address,
+      ...rest,
+    } as unknown as WriteContractVariables<
+      typeof ABI,
+      typeof FUNCTION,
+      ContractFunctionArgs<typeof ABI, 'nonpayable', typeof FUNCTION>,
+      config,
+      config['chains'][number]['id']
+    >, options)
+  }
+
   return {
-    writeDepositERC20: ({ l2ChainId, args, ...rest }: WriteDepositERC20Parameters) => {
-      const l2Chain = config.l2chains[l2ChainId]
-
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      return writeContract({
-        chainId: l2Chain.l1ChainId,
-        address: l2Chain.l1Addresses.l1StandardBridge.address,
-        abi: ABI,
-        functionName: FUNCTION,
-        args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
-        account: account.address,
-        ...rest,
-      })
-    },
-    writeDepositERC20Async: ({ l2ChainId, args, ...rest }: WriteDepositERC20Parameters) => {
-      const l2Chain = config.l2chains[l2ChainId]
-
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      return writeContractAsync({
-        chainId: l2Chain.l1ChainId,
-        address: l2Chain.l1Addresses.l1StandardBridge.address,
-        abi: ABI,
-        functionName: FUNCTION,
-        args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
-        account: account.address,
-        ...rest,
-      })
-    },
+    writeDepositERC20,
+    writeDepositERC20Async,
     ...writeReturn,
   } as unknown as UseWriteDepositERC20ReturnType<config, context>
 }
