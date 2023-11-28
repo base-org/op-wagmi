@@ -1,7 +1,9 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawETHParameters as WriteWithdrawETHActionParameters } from 'op-viem/actions'
+import type { ContractFunctionArgs } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
+import type { WriteContractVariables } from 'wagmi/query'
 import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -44,46 +46,68 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
   args: UseWriteWithdrawETHParameters<config, context> = {},
 ): UseWriteWithdrawETHReturnType<config, context> {
   const config = useOpConfig(args)
-  const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract()
+  const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
   const account = useAccount(args)
 
+  const writeWithdrawETH: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETH'] = (
+    { chainId, args, ...rest },
+    options,
+  ) => {
+    const l2Chain = config.l2chains[chainId]
+
+    if (!l2Chain) {
+      throw new Error('L2 chain not configured')
+    }
+
+    return writeContract({
+      chainId: l2Chain.chainId,
+      address: l2Chain.l2Addresses.l2StandardBridge.address,
+      abi: ABI,
+      functionName: FUNCTION,
+      args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+      value: args.amount,
+      account: account.address,
+      ...rest,
+    } as unknown as WriteContractVariables<
+      typeof ABI,
+      typeof FUNCTION,
+      ContractFunctionArgs<typeof ABI, 'payable', typeof FUNCTION>,
+      config,
+      config['chains'][number]['id']
+    >, options)
+  }
+
+  const writeWithdrawETHAsync: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETHAsync'] = (
+    { chainId, args, ...rest },
+    options,
+  ) => {
+    const l2Chain = config.l2chains[chainId]
+
+    if (!l2Chain) {
+      throw new Error('L2 chain not configured')
+    }
+
+    return writeContractAsync({
+      chainId: l2Chain.chainId,
+      address: l2Chain.l2Addresses.l2StandardBridge.address,
+      abi: ABI,
+      functionName: FUNCTION,
+      args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
+      value: args.amount,
+      account: account.address,
+      ...rest,
+    } as unknown as WriteContractVariables<
+      typeof ABI,
+      typeof FUNCTION,
+      ContractFunctionArgs<typeof ABI, 'payable', typeof FUNCTION>,
+      config,
+      config['chains'][number]['id']
+    >, options)
+  }
+
   return {
-    writeWithdrawETH: ({ chainId, args, ...rest }: WriteWithdrawETHParameters) => {
-      const l2Chain = config.l2chains[chainId]
-
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      return writeContract({
-        chainId: l2Chain.chainId,
-        address: l2Chain.l2Addresses.l2StandardBridge.address,
-        abi: ABI,
-        functionName: FUNCTION,
-        args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
-        value: args.amount,
-        account: account.address,
-        ...rest,
-      })
-    },
-    writeWithdrawETHAsync: ({ chainId, args, ...rest }: WriteWithdrawETHParameters) => {
-      const l2Chain = config.l2chains[chainId]
-
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      writeContractAsync({
-        chainId: l2Chain.chainId,
-        address: l2Chain.l2Addresses.l2StandardBridge.address,
-        abi: ABI,
-        functionName: FUNCTION,
-        args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
-        value: args.amount,
-        account: account.address,
-        ...rest,
-      })
-    },
+    writeWithdrawETH,
+    writeWithdrawETHAsync,
     ...writeReturn,
   } as unknown as UseWriteWithdrawETHReturnType<config, context>
 }
