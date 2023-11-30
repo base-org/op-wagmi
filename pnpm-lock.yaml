@@ -18,8 +18,8 @@ importers:
         specifier: beta
         version: 2.0.0-beta.5(@types/react@18.2.38)(react@18.2.0)(typescript@5.0.4)(viem@2.0.0-beta.6)
       op-viem:
-        specifier: 1.3.0-alpha
-        version: 1.3.0-alpha(@wagmi/core@2.0.0-beta.5)(typescript@5.0.4)(viem@2.0.0-beta.6)(wagmi@2.0.0-beta.5)
+        specifier: 1.3.1-alpha
+        version: 1.3.1-alpha(@wagmi/core@2.0.0-beta.5)(typescript@5.0.4)(viem@2.0.0-beta.6)(wagmi@2.0.0-beta.5)
       viem:
         specifier: beta
         version: 2.0.0-beta.6(typescript@5.0.4)(zod@3.22.4)
@@ -9198,8 +9198,8 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /op-viem@1.3.0-alpha(@wagmi/core@2.0.0-beta.5)(typescript@5.0.4)(viem@2.0.0-beta.6)(wagmi@2.0.0-beta.5):
-    resolution: {integrity: sha512-pcV+8BwYUwWfixti9aRVs2A/3Y5PjUIvGDOFPm7AyHnrxwm8JHmtWnj+MRUuHJ+SujZ8picdUyu/wvCxLj2Mng==}
+  /op-viem@1.3.1-alpha(@wagmi/core@2.0.0-beta.5)(typescript@5.0.4)(viem@2.0.0-beta.6)(wagmi@2.0.0-beta.5):
+    resolution: {integrity: sha512-I9mtT5TPC/l+m+ki6FBRZvkdc6WtCV703atOLaEkMJTebxViWAxia3JZO87fOPRexMT+yAZDnDhTy8fB9S9gtQ==}
     requiresBuild: true
     peerDependencies:
       typescript: '>=5.0.4'
