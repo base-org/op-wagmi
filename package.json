@@ -62,7 +62,7 @@
     "simple-git-hooks": "^2.9.0",
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.0",
-    "typescript": "5.0.4",
+    "typescript": "5.2.2",
     "vitest": "^0.34.1",
     "@testing-library/react-hooks": "^8.0.1",
     "@tanstack/react-query": ">=5.0.0"
