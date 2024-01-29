@@ -13,7 +13,7 @@ runs:
         cache: pnpm
 
     - name: Set up foundry
-      uses: foundry-rs/foundry-toolchain@v1
+      uses: foundry-rs/foundry-toolchain@v1.1.0
 
     - name: Install node modules
       run: pnpm install
