@@ -56,8 +56,8 @@ export function useSimulateProveWithdrawalTransaction<
   }
 
   const account = useAccount(rest)
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
-  const l2PublicClient = usePublicClient({ chainId: l2ChainId })
+  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })!
+  const l2PublicClient = usePublicClient({ chainId: l2ChainId })!
   const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
 
   const query = {
@@ -103,7 +103,8 @@ export function useSimulateProveWithdrawalTransaction<
     }),
   }
 
-  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
+  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true) && Boolean(l1PublicClient)
+    && Boolean(l2PublicClient)
   return {
     ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
     queryKey: query.queryKey,

@@ -27,7 +27,7 @@ export function useProveWithdrawalArgs({
     throw new Error('L2 chain not configured')
   }
 
-  const l2PublicClient = usePublicClient({ chainId: l2Chain.chainId })
+  const l2PublicClient = usePublicClient({ chainId: l2Chain.chainId })!
 
   const { data: blockNumberOfLatestL2OutputProposal } = useBlockNumberOfLatestL2OutputProposal({
     config: opConfig,

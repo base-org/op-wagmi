@@ -25,7 +25,7 @@ export async function makeStateTrieProof(
 }
 
 export function useMakeStateTrieProof(
-  client: PublicClient,
+  client: PublicClient | undefined,
   blockNumber: bigint | undefined,
   address: `0x${string}`,
   slot: `0x${string}` | undefined,
@@ -33,7 +33,7 @@ export function useMakeStateTrieProof(
   const [proof, setProof] = useState<StateTrieProof | undefined>(undefined)
 
   useEffect(() => {
-    if (!blockNumber || !slot) {
+    if (!blockNumber || !slot || !client) {
       return undefined
     }
 

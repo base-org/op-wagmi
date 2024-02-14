@@ -57,8 +57,8 @@ async function writeMutation(
   { l1ChainId, l2ChainId, args, ...rest }: FinalizeWithdrawalTransactionMutationParameters,
 ) {
   const walletClient = await getWalletClient(config, { chainId: l1ChainId })
-  const l1PublicClient = getPublicClient(config, { chainId: l1ChainId })
-  const l2PublicClient = getPublicClient(config, { chainId: l2ChainId })
+  const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
+  const l2PublicClient = await getPublicClient(config, { chainId: l2ChainId })!
   const l1Addresses = config.l2chains[l2ChainId].l1Addresses
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
