@@ -20,6 +20,7 @@ test('useSimulateDepositETH', async () => {
   expect(result.current).toMatchInlineSnapshot(`
    {
        "data": {
+         "chainId": 1,
          "request": {
            "__mode": "prepared",
            "abi": [

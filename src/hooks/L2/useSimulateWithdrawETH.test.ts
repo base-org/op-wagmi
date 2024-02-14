@@ -20,6 +20,7 @@ test('useSimulateWithdrawETH', async () => {
   expect(result.current).toMatchInlineSnapshot(`
     {
       "data": {
+        "chainId": 8453,
         "request": {
           "__mode": "prepared",
           "abi": [

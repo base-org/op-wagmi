@@ -1,4 +1,4 @@
-import { mock } from '@wagmi/core/internal'
+import { mock } from '@wagmi/connectors'
 import { base as viem_base, mainnet as viem_mainnet } from 'viem/chains'
 import { createConfig, http } from 'wagmi'
 import { base as opWagmiBase } from '../constants/chains/base.js'

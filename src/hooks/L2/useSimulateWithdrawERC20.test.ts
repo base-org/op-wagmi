@@ -21,6 +21,7 @@ test('useSimulateWithdrawERC20', async () => {
   expect(result.current).toMatchInlineSnapshot(`
     {
       "data": {
+        "chainId": 8453,
         "request": {
           "__mode": "prepared",
           "abi": [
