@@ -86,7 +86,8 @@ export function useSimulateFinalizeWithdrawalTransaction<
     }),
   }
 
-  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true) && !!l1PublicClient && !!l2PublicClient
+  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true) && Boolean(l1PublicClient)
+    && Boolean(l2PublicClient)
   return {
     ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
     queryKey: query.queryKey,
