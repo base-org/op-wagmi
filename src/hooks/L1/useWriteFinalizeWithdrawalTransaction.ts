@@ -5,17 +5,13 @@ import {
   simulateFinalizeWithdrawalTransaction,
   writeFinalizeWithdrawalTranasction,
 } from 'op-viem/actions'
-import type { Chain, ChainContract, Hash } from 'viem'
+import type { Chain, Hash } from 'viem'
 import { type Config, useConfig } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
-import {
-  L2ChainMissingSourceChainMessage,
-  L2ChainNotConfiguredMessage,
-  PortalContractNotConfiguredMessage,
-} from '../../constants/errorMessages.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'finalizeWithdrawalTransaction'
@@ -63,12 +59,7 @@ async function writeMutation(
   const walletClient = await getWalletClient(config, { chainId: l1ChainId })
   const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
   const l2PublicClient = await getPublicClient(config, { chainId: l2Chain.id })!
-  const portal: ChainContract | undefined = l2Chain?.contracts?.portal
-    ?.[l1ChainId as keyof typeof l2Chain.contracts.portal]
-
-  if (!portal) {
-    throw new Error(PortalContractNotConfiguredMessage(l1ChainId, l2Chain.name))
-  }
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
     hash: args.withdrawalTxHash,
@@ -100,16 +91,9 @@ export function useWriteFinalizeWithdrawalTransaction<config extends Config = Co
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteFinalizeWithdrawalTransactionParameters) {
-      const l2Chain = config.chains.find((chain) => chain.id === l2ChainId)
+      const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
-      if (!l2Chain) {
-        throw new Error(L2ChainNotConfiguredMessage(l2ChainId))
-      }
-      if (!l2Chain.sourceId) {
-        throw new Error(L2ChainMissingSourceChainMessage(l2Chain.name))
-      }
-
-      return writeMutation(config, { args, l1ChainId: l2Chain.sourceId, l2Chain, l2ChainId: l2Chain.id, ...rest })
+      return writeMutation(config, { args, l1ChainId, l2Chain, l2ChainId: l2Chain.id, ...rest })
     },
     mutationKey: ['writeContract'],
   }
