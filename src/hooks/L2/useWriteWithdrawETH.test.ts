@@ -27,7 +27,7 @@ test('useWriteWithdrawETH', async () => {
   })
 
   await waitFor(() => {
-    Promise.all([
+    return Promise.all([
       expect(result.current.useWriteWithdrawETH.error).toBeNull(),
       expect(result.current.useWriteWithdrawETH.isSuccess).toBeTruthy(),
     ])

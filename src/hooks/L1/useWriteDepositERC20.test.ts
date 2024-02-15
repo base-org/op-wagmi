@@ -23,7 +23,7 @@ test('useWriteDepositERC20', async () => {
   })
 
   await waitFor(() => {
-    Promise.all([
+    return Promise.all([
       expect(result.current.error).toBeNull(),
       expect(result.current.isSuccess).toBeTruthy(),
     ])

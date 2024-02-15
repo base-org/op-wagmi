@@ -28,7 +28,7 @@ test('useWriteWithdrawERC20', async () => {
   })
 
   await waitFor(() => {
-    Promise.all([
+    return Promise.all([
       expect(result.current.useWriteWithdrawERC20.error).toBeNull(),
       expect(result.current.useWriteWithdrawERC20.isSuccess).toBeTruthy(),
     ])
