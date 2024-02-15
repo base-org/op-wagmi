@@ -6,16 +6,12 @@ import {
   writeDepositETH,
   type WriteDepositETHParameters as WriteDepositETHActionParameters,
 } from 'op-viem/actions'
-import type { Chain, ChainContract } from 'viem'
+import type { Chain } from 'viem'
 import { useConfig } from 'wagmi'
-import {
-  L2ChainMissingSourceChainMessage,
-  L2ChainNotConfiguredMessage,
-  PortalContractNotConfiguredMessage,
-} from '../../constants/errorMessages.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'depositTransaction'
@@ -56,12 +52,7 @@ async function writeMutation(
   const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
   const l2PublicClient = await getPublicClient(config, { chainId: l2ChainId })!
 
-  const portal: ChainContract | undefined = l2Chain?.contracts?.portal
-    ?.[l1ChainId as keyof typeof l2Chain.contracts.portal]
-
-  if (!portal) {
-    throw new Error(PortalContractNotConfiguredMessage(l1ChainId, l2Chain.name))
-  }
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const l2GasLimit = args.gasLimit
     ?? Number(
@@ -99,20 +90,13 @@ export function useWriteDepositETH<config extends Config = Config, context = unk
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
-      const l2Chain = config.chains.find((chain) => chain.id === l2ChainId)
-
-      if (!l2Chain) {
-        throw new Error(L2ChainNotConfiguredMessage(l2ChainId))
-      }
-      if (!l2Chain.sourceId) {
-        throw new Error(L2ChainMissingSourceChainMessage(l2Chain.name))
-      }
+      const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
       return writeMutation(config, {
         args,
-        l1ChainId: l2Chain.sourceId,
+        l1ChainId,
         l2ChainId: l2ChainId,
-        l2Chain: l2Chain,
+        l2Chain,
         ...rest,
       })
     },

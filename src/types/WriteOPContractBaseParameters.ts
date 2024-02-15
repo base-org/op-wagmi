@@ -2,7 +2,6 @@ import type { Abi, ContractFunctionArgs, ContractFunctionName } from 'viem'
 import type { Config } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
 
-
 export type WriteOPContractBaseParameters<
   abi extends Abi | readonly unknown[],
   functionName extends ContractFunctionName<abi, 'nonpayable' | 'payable'>,

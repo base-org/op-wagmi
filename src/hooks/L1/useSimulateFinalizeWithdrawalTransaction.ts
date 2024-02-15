@@ -4,12 +4,12 @@ import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
 import { getWithdrawalMessages, simulateFinalizeWithdrawalTransaction } from 'op-viem/actions'
 import { type Hash } from 'viem'
-import { type Config, useAccount, usePublicClient } from 'wagmi'
+import { type Config, useAccount, useConfig, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'finalizeWithdrawalTransaction'
@@ -45,17 +45,15 @@ export function useSimulateFinalizeWithdrawalTransaction<
     chainId
   >,
 ): UseSimulateFinalizeWithdrawalTransactionReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
   const account = useAccount(rest)
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })!
+  const l1PublicClient = usePublicClient({ chainId: l1ChainId })!
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })!
-  const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
+
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const query = {
     async queryFn() {
@@ -66,7 +64,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
       return simulateFinalizeWithdrawalTransaction(l1PublicClient, {
         withdrawal: withdrawalMessages.messages[0],
         account: account.address,
-        ...l1Addresses,
+        portal,
       })
     },
     ...queryOverride,
@@ -81,7 +79,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
         ...args,
       },
       account: account.address,
-      chainId: l2Chain.l1ChainId,
+      chainId: l1ChainId,
       action: 'finalizeWithdrawalTransaction',
     }),
   }

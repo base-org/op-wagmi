@@ -1,8 +1,6 @@
 import type { Abi, ContractFunctionArgs, ContractFunctionName } from 'viem'
 import type { Config, UseSimulateContractParameters } from 'wagmi'
 import type { SimulateContractData } from 'wagmi/query'
-import type { ConfigParameter } from '../hooks/useOpConfig.js'
-
 
 export type UseSimulateOPActionBaseParameters<
   abi extends Abi | readonly unknown[] = Abi,
@@ -40,4 +38,6 @@ export type UseSimulateOPActionBaseParameters<
     | 'chainId'
     | 'config'
   >
-  & ConfigParameter<config>
+  & {
+    config?: Config
+  }

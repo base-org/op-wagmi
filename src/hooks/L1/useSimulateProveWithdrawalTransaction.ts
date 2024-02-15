@@ -10,12 +10,12 @@ import {
   simulateProveWithdrawalTransaction,
 } from 'op-viem/actions'
 import { type Hash } from 'viem'
-import { type Config, useAccount, usePublicClient } from 'wagmi'
+import { type Config, useAccount, useConfig, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validateL2OutputOracleContract, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'proveWithdrawalTransaction'
@@ -48,17 +48,16 @@ export function useSimulateProveWithdrawalTransaction<
 >(
   { args, l2ChainId, query: queryOverride, ...rest }: UseSimulateProveWithdrawalTransactionParameters<config, chainId>,
 ): UseSimulateProveWithdrawalTransactionReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
   const account = useAccount(rest)
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })!
+  const l1PublicClient = usePublicClient({ chainId: l1ChainId })!
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })!
-  const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
+
+  const l2OutputOracle = validateL2OutputOracleContract(l1ChainId, l2Chain).address
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const query = {
     async queryFn() {
@@ -67,12 +66,12 @@ export function useSimulateProveWithdrawalTransaction<
       })
 
       const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
-        ...l1Addresses,
+        l2OutputOracle,
       })
 
       const output = await getOutputForL2Block(l1PublicClient, {
         l2BlockNumber,
-        ...l1Addresses,
+        l2OutputOracle,
       })
 
       const simulateProveWithdrawalTransactionArgs = await getProveWithdrawalTransactionArgs(l2PublicClient, {
@@ -83,7 +82,7 @@ export function useSimulateProveWithdrawalTransaction<
       return simulateProveWithdrawalTransaction(l1PublicClient, {
         args: simulateProveWithdrawalTransactionArgs,
         account: account.address,
-        ...l1Addresses,
+        portal,
       })
     },
     ...queryOverride,
@@ -98,7 +97,7 @@ export function useSimulateProveWithdrawalTransaction<
         ...args,
       },
       account: account.address,
-      chainId: l2Chain.l1ChainId,
+      chainId: l1ChainId,
       action: 'proveWithdrawalTransaction',
     }),
   }

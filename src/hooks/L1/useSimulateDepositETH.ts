@@ -2,11 +2,18 @@
 
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositETHParameters } from 'op-viem/actions'
-import { type Config, useAccount, useEstimateGas, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import {
+  type Config,
+  useAccount,
+  useConfig,
+  useEstimateGas,
+  useSimulateContract,
+  type UseSimulateContractParameters,
+} from 'wagmi'
 
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'depositTransaction'
@@ -36,13 +43,11 @@ export function useSimulateDepositETH<
 >(
   { args, l2ChainId, query, ...rest }: UseSimulateDepositETHParameters<config, chainId>,
 ): UseSimulateDepositETHReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
   const account = useAccount(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+  const portal = validatePortalContract(l1ChainId, l2Chain)
 
   const { data: l2GasEstimate } = useEstimateGas({
     chainId: l2ChainId,
@@ -54,11 +59,11 @@ export function useSimulateDepositETH<
 
   const enabled = Boolean(args.gasLimit || l2GasEstimate) && (query?.enabled ?? true)
   return useSimulateContract({
-    address: l2Chain.l1Addresses.portal.address,
+    address: portal.address,
     abi: ABI,
     functionName: FUNCTION,
     args: [args.to, args.amount, BigInt(args.gasLimit ?? l2GasEstimate ?? 0), false, args.data ?? '0x'],
-    chainId: l2Chain.l1ChainId,
+    chainId: l1ChainId,
     value: args.amount,
     query: { ...query, enabled } as UseSimulateContractParameters['query'],
     account: account.address,

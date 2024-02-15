@@ -2,11 +2,11 @@
 
 import { l1StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositERC20Parameters } from 'op-viem/actions'
-import { type Config, useAccount, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+import { type Config, useAccount, useConfig, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
 
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validatel1StandardBridgeContract, validateL2Chain } from '../../util/validateChains.js'
 
 const ABI = l1StandardBridgeABI
 const FUNCTION = 'depositERC20To'
@@ -36,20 +36,18 @@ export function useSimulateDepositERC20<
 >(
   { args, l2ChainId, query, ...rest }: UseSimulateDepositERC20Parameters<config, chainId>,
 ): UseSimulateDepositERC20ReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
   const account = useAccount(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+  const l1StandardBridge = validatel1StandardBridgeContract(l1ChainId, l2Chain).address
 
   return useSimulateContract({
-    address: l2Chain.l1Addresses.l1StandardBridge.address,
+    address: l1StandardBridge,
     abi: ABI,
     functionName: FUNCTION,
     args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
-    chainId: l2Chain.l1ChainId,
+    chainId: l1ChainId,
     query: query as UseSimulateContractParameters['query'],
     account: account.address,
     ...rest,

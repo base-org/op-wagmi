@@ -4,7 +4,6 @@ import type { Abi } from 'viem'
 import type { Config, UseWriteContractReturnType } from 'wagmi'
 import type { WriteContractData, WriteContractVariables } from 'wagmi/query'
 
-
 export type UseWriteOPActionBaseReturnType<
   args,
   config extends Config = Config,
