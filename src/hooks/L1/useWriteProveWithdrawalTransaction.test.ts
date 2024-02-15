@@ -18,9 +18,11 @@ test('useWriteProveWithdrawalTransaction', async () => {
   })
 
   await waitFor(() => {
-    expect(result.current.error).toBeNull()
-    // We're only checking that we're able to successfully call the contract. The snapshot
-    // will continue to change as blocks get procuded, and this check is sufficient.
-    expect(result.current.isSuccess).toBeTruthy()
+    Promise.all([
+      expect(result.current.error).toBeNull(),
+      // We're only checking that we're able to successfully call the contract. The snapshot
+      // will continue to change as blocks get procuded, and this check is sufficient.
+      expect(result.current.isSuccess).toBeTruthy(),
+    ])
   })
 }, { retry: 3 })
