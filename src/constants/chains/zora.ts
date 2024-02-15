@@ -1,12 +1,15 @@
 import { zoraAddresses } from 'op-viem/chains'
-import type { L2Chain } from '../../types/OpConfig.js'
+import { type Chain, mainnet, zora as viem_zora } from 'viem/chains'
 
-export const zora: L2Chain<number, number> = {
-  chainId: 7777777,
-  l1ChainId: 1,
-  l1Addresses: zoraAddresses,
-  l2Addresses: {
-    l2L1MessagePasserAddress: { address: '0x4200000000000000000000000000000000000016', chainId: 7777777 },
-    l2StandardBridge: { address: '0x4200000000000000000000000000000000000010', chainId: 7777777 },
+export const zora: Chain = {
+  ...viem_zora,
+  contracts: {
+    ...viem_zora.contracts,
+    l1StandardBridge: {
+      [mainnet.id]: {
+        address: zoraAddresses.l1StandardBridge.address,
+        blockCreated: zoraAddresses.l1StandardBridge.blockCreated,
+      },
+    },
   },
-} as const
+}
