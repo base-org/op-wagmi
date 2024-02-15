@@ -1,7 +1,6 @@
 import { l2OutputOracleABI } from '@eth-optimism/contracts-ts'
 import type { Abi } from 'viem'
 import { useConfig, useReadContract, type UseReadContractParameters, type UseReadContractReturnType } from 'wagmi'
-import type { OpConfig } from '../../types/OpConfig.js'
 
 export function useBlockNumberOfLatestL2OutputProposal(
   { l2ChainId, config, ...rest }: { l2ChainId: number; config?: OpConfig } & UseReadContractParameters,

@@ -11,7 +11,7 @@ import {
 import type { Hash } from 'viem'
 import { type Config } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
@@ -21,7 +21,7 @@ const ABI = optimismPortalABI
 const FUNCTION = 'proveWithdrawalTransaction'
 
 export type WriteProveWithdrawalTransactionParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > = WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId> & {
   args: {
@@ -30,10 +30,10 @@ export type WriteProveWithdrawalTransactionParameters<
   l2ChainId: number
 }
 
-export type UseWriteProveWithdrawalTransactionParameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteProveWithdrawalTransactionParameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
-export type UseWriteProveWithdrawalTransactionReturnType<config extends Config = OpConfig, context = unknown> =
+export type UseWriteProveWithdrawalTransactionReturnType<config extends Config = Config, context = unknown> =
   & Omit<
     UseWriteOPActionBaseReturnType<WriteProveWithdrawalTransactionParameters, config, context>,
     'write' | 'writeAsync'
@@ -101,7 +101,7 @@ async function writeMutation(
  * @param parameters - {@link UseWriteProveWithdrawalTransactionParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteProveWithdrawalTransactionReturnType}
  */
-export function useWriteProveWithdrawalTransaction<config extends Config = OpConfig, context = unknown>(
+export function useWriteProveWithdrawalTransaction<config extends Config = Config, context = unknown>(
   args: UseWriteProveWithdrawalTransactionParameters<config, context> = {},
 ): UseWriteProveWithdrawalTransactionReturnType<config, context> {
   const opConfig = useOpConfig(args)

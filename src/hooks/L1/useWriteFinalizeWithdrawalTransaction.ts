@@ -8,6 +8,11 @@ import {
 import type { Chain, ChainContract, Hash } from 'viem'
 import { type Config, useConfig } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
+import {
+  L2ChainMissingSourceChainMessage,
+  L2ChainNotConfiguredMessage,
+  PortalContractNotConfiguredMessage,
+} from '../../constants/errorMessages.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
@@ -62,7 +67,7 @@ async function writeMutation(
     ?.[l1ChainId as keyof typeof l2Chain.contracts.portal]
 
   if (!portal) {
-    throw new Error(`Portal contract to chainId ${l1ChainId} not configured for chain ${l2Chain.name}`)
+    throw new Error(PortalContractNotConfiguredMessage(l1ChainId, l2Chain.name))
   }
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
@@ -98,10 +103,10 @@ export function useWriteFinalizeWithdrawalTransaction<config extends Config = Co
       const l2Chain = config.chains.find((chain) => chain.id === l2ChainId)
 
       if (!l2Chain) {
-        throw new Error('L2 chain not configured')
+        throw new Error(L2ChainNotConfiguredMessage(l2ChainId))
       }
       if (!l2Chain.sourceId) {
-        throw new Error(`Chain ${l2Chain.name} does not have a source chain, is it an L2 chain?`)
+        throw new Error(L2ChainMissingSourceChainMessage(l2Chain.name))
       }
 
       return writeMutation(config, { args, l1ChainId: l2Chain.sourceId, l2Chain, l2ChainId: l2Chain.id, ...rest })

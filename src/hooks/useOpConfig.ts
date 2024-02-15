@@ -9,9 +9,9 @@ import { zora } from '../constants/chains/zora.js'
 import { zoraGoerli } from '../constants/chains/zoraGoerli.js'
 import { type OpConfig } from '../types/OpConfig.js'
 
-export type UseConfigParameters<config extends Config = OpConfig> = ConfigParameter<config>
+export type UseConfigParameters<config extends Config = Config> = ConfigParameter<config>
 
-export type ConfigParameter<config extends Config = OpConfig> = {
+export type ConfigParameter<config extends Config = Config> = {
   config?: OpConfig | config | undefined
 }
 

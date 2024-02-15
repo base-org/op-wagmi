@@ -4,7 +4,7 @@ import { type WriteDepositERC20Parameters as WriteDepositERC20ActionParameters }
 import type { ContractFunctionArgs } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
@@ -14,7 +14,7 @@ const ABI = l1StandardBridgeABI
 const FUNCTION = 'depositERC20To'
 
 export type WriteDepositERC20Parameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -22,10 +22,10 @@ export type WriteDepositERC20Parameters<
   & { args: Omit<Pick<WriteDepositERC20ActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { l2ChainId: number }
 
-export type UseWriteDepositERC20Parameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositERC20Parameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
-export type UseWriteDepositERC20ReturnType<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositERC20ReturnType<config extends Config = Config, context = unknown> =
   & Omit<UseWriteOPActionBaseReturnType<WriteDepositERC20Parameters, config, context>, 'write' | 'writeAsync'>
   & {
     writeDepositERC20: UseWriteOPActionBaseReturnType<WriteDepositERC20Parameters, config, context>['write']
@@ -41,7 +41,7 @@ export type UseWriteDepositERC20ReturnType<config extends Config = OpConfig, con
  * @param parameters - {@link UseWriteDepositERC20Parameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositERC20ReturnType}
  */
-export function useWriteDepositERC20<config extends Config = OpConfig, context = unknown>(
+export function useWriteDepositERC20<config extends Config = Config, context = unknown>(
   args: UseWriteDepositERC20Parameters<config, context> = {},
 ): UseWriteDepositERC20ReturnType<config, context> {
   const config = useOpConfig(args)

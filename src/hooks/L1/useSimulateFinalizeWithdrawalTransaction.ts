@@ -6,7 +6,7 @@ import { getWithdrawalMessages, simulateFinalizeWithdrawalTransaction } from 'op
 import { type Hash } from 'viem'
 import { type Config, useAccount, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
 import { useOpConfig } from '../useOpConfig.js'
@@ -15,7 +15,7 @@ const ABI = optimismPortalABI
 const FUNCTION = 'finalizeWithdrawalTransaction'
 
 export type UseSimulateFinalizeWithdrawalTransactionParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -27,7 +27,7 @@ export type UseSimulateFinalizeWithdrawalTransactionParameters<
   }
 
 export type UseSimulateFinalizeWithdrawalTransactionReturnType<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
@@ -37,7 +37,7 @@ export type UseSimulateFinalizeWithdrawalTransactionReturnType<
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateFinalizeWithdrawalTransactionReturnType}
  */
 export function useSimulateFinalizeWithdrawalTransaction<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, l2ChainId, query: queryOverride, ...rest }: UseSimulateFinalizeWithdrawalTransactionParameters<

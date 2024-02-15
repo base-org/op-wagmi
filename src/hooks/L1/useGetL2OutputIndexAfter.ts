@@ -1,6 +1,5 @@
 import { l2OutputOracleABI } from '@eth-optimism/contracts-ts'
 import { useConfig, useReadContract, type UseReadContractParameters, type UseReadContractReturnType } from 'wagmi'
-import type { OpConfig } from '../../types/OpConfig.js'
 
 export function useGetL2OutputIndexAfter(
   { l2ChainId, blockNumber, config, ...rest }: {

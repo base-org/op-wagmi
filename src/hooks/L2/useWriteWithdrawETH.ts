@@ -4,7 +4,7 @@ import { type WriteWithdrawETHParameters as WriteWithdrawETHActionParameters } f
 import type { ContractFunctionArgs } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
@@ -15,7 +15,7 @@ const ABI = l2StandardBridgeABI
 const FUNCTION = 'withdrawTo'
 
 export type WriteWithdrawETHParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -23,7 +23,7 @@ export type WriteWithdrawETHParameters<
   & { args: Omit<Pick<WriteWithdrawETHActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { chainId: number }
 
-export type UseWriteWithdrawETHParameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteWithdrawETHParameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
 export type UseWriteWithdrawETHReturnType<config extends Config = Config, context = unknown> =
@@ -42,7 +42,7 @@ export type UseWriteWithdrawETHReturnType<config extends Config = Config, contex
  * @param parameters - {@link UseWriteWithdrawETHParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteWithdrawETHReturnType}
  */
-export function useWriteWithdrawETH<config extends Config = OpConfig, context = unknown>(
+export function useWriteWithdrawETH<config extends Config = Config, context = unknown>(
   args: UseWriteWithdrawETHParameters<config, context> = {},
 ): UseWriteWithdrawETHReturnType<config, context> {
   const config = useOpConfig(args)

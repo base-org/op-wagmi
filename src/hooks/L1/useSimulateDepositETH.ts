@@ -3,7 +3,7 @@
 import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { type SimulateDepositETHParameters } from 'op-viem/actions'
 import { type Config, useAccount, useEstimateGas, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
 import { useOpConfig } from '../useOpConfig.js'
@@ -12,7 +12,7 @@ const ABI = optimismPortalABI
 const FUNCTION = 'depositTransaction'
 
 export type UseSimulateDepositETHParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -21,7 +21,7 @@ export type UseSimulateDepositETHParameters<
   & { l2ChainId: number }
 
 export type UseSimulateDepositETHReturnType<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
@@ -31,7 +31,7 @@ export type UseSimulateDepositETHReturnType<
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateDepositETHReturnType}
  */
 export function useSimulateDepositETH<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, l2ChainId, query, ...rest }: UseSimulateDepositETHParameters<config, chainId>,
