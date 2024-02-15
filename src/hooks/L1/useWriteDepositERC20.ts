@@ -54,10 +54,11 @@ export function useWriteDepositERC20<config extends Config = Config, context = u
   ) => {
     const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
     const l1StandardBridge = validatel1StandardBridgeContract(l1ChainId, l2Chain).address
+    console.log('l1StandardBridge', l1StandardBridge)
 
     return writeContract(
       {
-        chainId: l2Chain.id,
+        chainId: l1ChainId,
         address: l1StandardBridge,
         abi: ABI,
         functionName: FUNCTION,
@@ -81,9 +82,10 @@ export function useWriteDepositERC20<config extends Config = Config, context = u
   ) => {
     const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
     const l1StandardBridge = validatel1StandardBridgeContract(l1ChainId, l2Chain).address
+    console.log('l1StandardBridge', l1StandardBridge)
 
     return writeContractAsync({
-      chainId: l2Chain.id,
+      chainId: l1ChainId,
       address: l1StandardBridge,
       abi: ABI,
       functionName: FUNCTION,
