@@ -1,9 +1,12 @@
 import type { Chain, ChainContract } from 'viem'
 import type { Config } from 'wagmi'
 import {
+  l1StandardBridgeContractNotConfiguredMessage,
   L2ChainMissingSourceChainMessage,
   L2ChainNotConfiguredMessage,
   l2OutputOracleContractNotConfiguredMessage,
+  l2StandardBridgeContractNotConfiguredMessage,
+  l2ToL1MessagePasserContractNotConfiguredMessage,
   PortalContractNotConfiguredMessage,
 } from '../constants/errorMessages.js'
 
@@ -48,7 +51,9 @@ export function validatel2ToL1MessagePasserContract(l2Chain: Chain) {
     | undefined
 
   if (!l2ToL1MessagePasser) {
-    throw new Error(`L2 to L1 message passer contract not configured for chain ${l2Chain.name}`)
+    throw new Error(
+      l2ToL1MessagePasserContractNotConfiguredMessage(l2Chain.name),
+    )
   }
 
   return l2ToL1MessagePasser as ChainContract
@@ -60,7 +65,9 @@ export function validatel1StandardBridgeContract(l1ChainId: number, l2Chain: Cha
 
   if (!l1StandardBridge) {
     // FIXME: Link to documentation for this
-    throw new Error(`L1 standard bridge contract not configured for chain ${l2Chain.name}`)
+    throw new Error(
+      l1StandardBridgeContractNotConfiguredMessage(l2Chain.name),
+    )
   }
 
   return l1StandardBridge as ChainContract
@@ -70,7 +77,9 @@ export function validateL2StandardBridgeContract(l2Chain: Chain) {
   const l2StandardBridge = l2Chain?.contracts?.l2StandardBridge as ChainContract | undefined
 
   if (!l2StandardBridge) {
-    throw new Error(`L2 standard bridge contract not configured for chain ${l2Chain.name}`)
+    throw new Error(
+      l2StandardBridgeContractNotConfiguredMessage(l2Chain.name),
+    )
   }
 
   return l2StandardBridge as ChainContract
