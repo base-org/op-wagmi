@@ -40,6 +40,7 @@ export default async function() {
       // TODO: Figure out forking / archive node issues
       // forkBlockNumber,
       blockTime,
+      startTimeout: 20000,
     },
   })
   await startProxy({
@@ -49,6 +50,7 @@ export default async function() {
       // TODO: Figure out forking / archive node issues
       // forkBlockNumber: rollupForkBlockNumber,
       blockTime: rollupBlockTime,
+      startTimeout: 20000,
     },
   })
 }
