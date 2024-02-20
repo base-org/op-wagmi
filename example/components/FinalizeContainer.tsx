@@ -1,11 +1,7 @@
+import { networkToChainId } from '@/constants/networkToChainId'
 import { useState } from 'react'
 import { FinalizeWithdrawalTransaction } from './FinalizeWithdrawalTransaction'
 import { NetworkSelector } from './NetworkSelector'
-
-const networkToChainId: Record<'optimism' | 'base', number> = {
-  base: 84531,
-  optimism: 420,
-}
 
 export function FinalizeContainer() {
   const [selectedNetwork, setSelectedNetwork] = useState<'optimism' | 'base'>('base')

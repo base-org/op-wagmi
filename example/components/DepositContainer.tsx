@@ -1,13 +1,9 @@
+import { networkToChainId } from '@/constants/networkToChainId'
 import { useState } from 'react'
 import { AssetTypeToggle } from './AssetTypeToggle'
 import { DepositERC20 } from './DepositERC20'
 import { DepositETH } from './DepositETH'
 import { NetworkSelector } from './NetworkSelector'
-
-const networkToChainId: Record<'optimism' | 'base', number> = {
-  base: 84531,
-  optimism: 420,
-}
 
 export function DepositContainer() {
   const [selectedAssetType, setSelectedAssetType] = useState<'eth' | 'erc20'>('eth')

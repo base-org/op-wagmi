@@ -1,13 +1,9 @@
+import { networkToChainId } from '@/constants/networkToChainId'
 import { useState } from 'react'
 import { AssetTypeToggle } from './AssetTypeToggle'
 import { NetworkSelector } from './NetworkSelector'
 import { WithdrawERC20 } from './WithdrawERC20'
 import { WithdrawETH } from './WithdrawETH'
-
-const networkToChainId: Record<'optimism' | 'base', number> = {
-  base: 84531,
-  optimism: 420,
-}
 
 export function WithdrawContainer() {
   const [selectedAssetType, setSelectedAssetType] = useState<'eth' | 'erc20'>('eth')
