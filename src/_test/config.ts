@@ -1,7 +1,6 @@
 import { mock } from '@wagmi/connectors'
-import { mainnet as viem_mainnet } from 'viem/chains'
+import { base as viem_base, mainnet as viem_mainnet } from 'viem/chains'
 import { type Config, createConfig, http } from 'wagmi'
-import { base as opWagmiBase } from '../constants/chains/base.js'
 import { accounts } from './constants.js'
 import { getRpcUrls } from './utils.js'
 
@@ -17,7 +16,7 @@ const mainnet = {
 }
 
 const base = {
-  ...opWagmiBase,
+  ...viem_base,
   ...getRpcUrls({ port: 8546 }),
   // fork: {
   //   blockNumber: process.env.VITE_OPTIMISM_FORK_BLOCK_NUMBER
