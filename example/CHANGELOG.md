@@ -1,5 +1,18 @@
 # example
 
+## 1.0.0
+
+### Major Changes
+
+- 1590bec: Use Viem 2 stable release, remove OpConfig and rely on wagmi config.
+
+  OpConfigs can be removed from the project and the wagmi config can be used instead. This will allow for a more streamlined configuration process. Please see the configuration documentation for more information. https://www.opwagmi.sh/docs/configuration.html
+
+### Patch Changes
+
+- Updated dependencies [1590bec]
+  - op-wagmi@1.0.0
+
 ## 0.1.4
 
 ### Patch Changes

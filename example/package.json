@@ -1,6 +1,6 @@
 {
   "name": "@op-wagmi/example",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
