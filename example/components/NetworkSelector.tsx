@@ -1,6 +1,6 @@
 type NetworkSelectorProps = {
-  selectedNetwork: 'optimism' | 'base'
-  setSelectedNetwork: (network: 'optimism' | 'base') => void
+  selectedNetwork: 'optimismSepolia' | 'baseSepolia' | 'sepolia'
+  setSelectedNetwork: (network: 'optimismSepolia' | 'baseSepolia' | 'sepolia') => void
 }
 
 export function NetworkSelector({ selectedNetwork, setSelectedNetwork }: NetworkSelectorProps) {
@@ -8,19 +8,21 @@ export function NetworkSelector({ selectedNetwork, setSelectedNetwork }: Network
     <div className='flex flex-row justify-center items-center self-center w-48 rounded-full divide-x bg-white'>
       <button
         className={`w-24 flex items-center justify-center h-8 rounded-l-full ${
-          selectedNetwork === 'base' ? 'bg-blue-500 text-white shadow-inner shadow-stone-900' : 'bg-white text-black'
+          selectedNetwork === 'baseSepolia'
+            ? 'bg-blue-500 text-white shadow-inner shadow-stone-900'
+            : 'bg-white text-black'
         }`}
-        onClick={() => setSelectedNetwork('base')}
+        onClick={() => setSelectedNetwork('baseSepolia')}
       >
         Base
       </button>
       <button
         className={`w-24 flex items-center justify-center h-8 rounded-r-full ${
-          selectedNetwork === 'optimism'
+          selectedNetwork === 'optimismSepolia'
             ? 'bg-red-600 text-white shadow-inner shadow-stone-900'
             : 'bg-white text-black'
         }`}
-        onClick={() => setSelectedNetwork('optimism')}
+        onClick={() => setSelectedNetwork('optimismSepolia')}
       >
         Optimism
       </button>

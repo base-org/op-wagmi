@@ -2,16 +2,16 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, http, WagmiProvider } from 'wagmi'
-import { base, mainnet, optimism } from 'wagmi/chains'
+import { baseSepolia, optimismSepolia, sepolia } from 'wagmi/chains'
 
 const queryClient = new QueryClient()
 
-const config = createConfig({
-  chains: [base, mainnet, optimism],
+export const config = createConfig({
+  chains: [sepolia, baseSepolia, optimismSepolia],
   transports: {
-    [base.id]: http(),
-    [mainnet.id]: http(),
-    [optimism.id]: http(),
+    [sepolia.id]: http(),
+    [baseSepolia.id]: http(),
+    [optimismSepolia.id]: http(),
   },
 })
 

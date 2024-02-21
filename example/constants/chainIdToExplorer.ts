@@ -1,6 +1,7 @@
-import { base, optimism } from 'viem/chains'
+import { blastSepolia, optimismSepolia, sepolia } from 'viem/chains'
 
 export const chainIdToExplorer: Record<number, string> = {
-  [base.id]: base.blockExplorers.default.url,
-  [optimism.id]: optimism.blockExplorers.default.url,
+  [sepolia.id]: sepolia.blockExplorers.default.url,
+  [blastSepolia.id]: blastSepolia.blockExplorers.default.url,
+  [optimismSepolia.id]: optimismSepolia.blockExplorers.default.url,
 }
