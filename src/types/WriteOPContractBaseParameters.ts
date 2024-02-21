@@ -1,12 +1,11 @@
 import type { Abi, ContractFunctionArgs, ContractFunctionName } from 'viem'
 import type { Config } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from './OpConfig.js'
 
 export type WriteOPContractBaseParameters<
   abi extends Abi | readonly unknown[],
   functionName extends ContractFunctionName<abi, 'nonpayable' | 'payable'>,
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
   allFunctionNames = ContractFunctionName<abi, 'nonpayable' | 'payable'>,
 > = Omit<

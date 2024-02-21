@@ -5,20 +5,19 @@ import {
   simulateFinalizeWithdrawalTransaction,
   writeFinalizeWithdrawalTranasction,
 } from 'op-viem/actions'
-import type { Hash } from 'viem'
-import { type Config } from 'wagmi'
+import type { Chain, Hash } from 'viem'
+import { type Config, useConfig } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
-import type { OpConfig } from '../../types/OpConfig.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'finalizeWithdrawalTransaction'
 
 export type WriteFinalizeWithdrawalTransactionParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > = WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId> & {
   args: {
@@ -27,10 +26,10 @@ export type WriteFinalizeWithdrawalTransactionParameters<
   l2ChainId: number
 }
 
-export type UseWriteFinalizeWithdrawalTransactionParameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteFinalizeWithdrawalTransactionParameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
-export type UseWriteFinalizeWithdrawalTransactionReturnType<config extends Config = OpConfig, context = unknown> =
+export type UseWriteFinalizeWithdrawalTransactionReturnType<config extends Config = Config, context = unknown> =
   & Omit<
     UseWriteOPActionBaseReturnType<WriteFinalizeWithdrawalTransactionParameters, config, context>,
     'write' | 'writeAsync'
@@ -48,18 +47,19 @@ export type UseWriteFinalizeWithdrawalTransactionReturnType<config extends Confi
     >['writeAsync']
   }
 
-type FinalizeWithdrawalTransactionMutationParameters = WriteFinalizeWithdrawalTransactionParameters & {
+type FinalizeWithdrawalTransactionMutationParameters = {
   l1ChainId: number
-}
+  l2Chain: Chain
+} & WriteFinalizeWithdrawalTransactionParameters
 
 async function writeMutation(
-  config: OpConfig,
-  { l1ChainId, l2ChainId, args, ...rest }: FinalizeWithdrawalTransactionMutationParameters,
+  config: Config,
+  { l1ChainId, l2Chain, args, ...rest }: FinalizeWithdrawalTransactionMutationParameters,
 ) {
   const walletClient = await getWalletClient(config, { chainId: l1ChainId })
-  const l1PublicClient = getPublicClient(config, { chainId: l1ChainId })
-  const l2PublicClient = getPublicClient(config, { chainId: l2ChainId })
-  const l1Addresses = config.l2chains[l2ChainId].l1Addresses
+  const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
+  const l2PublicClient = await getPublicClient(config, { chainId: l2Chain.id })!
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
     hash: args.withdrawalTxHash,
@@ -68,13 +68,13 @@ async function writeMutation(
   await simulateFinalizeWithdrawalTransaction(l1PublicClient, {
     withdrawal: withdrawalMessages.messages[0],
     account: walletClient.account.address,
-    ...l1Addresses,
+    portal,
     ...rest,
   })
   return writeFinalizeWithdrawalTranasction(walletClient, {
     args: { withdrawal: withdrawalMessages.messages[0] },
     account: walletClient.account.address,
-    ...l1Addresses,
+    portal,
     ...rest,
   })
 }
@@ -84,20 +84,16 @@ async function writeMutation(
  * @param parameters - {@link UseWriteFinalizeWithdrawalTransactionParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteFinalizeWithdrawalTransactionReturnType}
  */
-export function useWriteFinalizeWithdrawalTransaction<config extends Config = OpConfig, context = unknown>(
+export function useWriteFinalizeWithdrawalTransaction<config extends Config = Config, context = unknown>(
   args: UseWriteFinalizeWithdrawalTransactionParameters<config, context> = {},
 ): UseWriteFinalizeWithdrawalTransactionReturnType<config, context> {
-  const opConfig = useOpConfig(args)
+  const config = useConfig(args)
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteFinalizeWithdrawalTransactionParameters) {
-      const l2Chain = opConfig.l2chains[l2ChainId]
+      const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChainId, l2ChainId: l2ChainId, ...rest })
+      return writeMutation(config, { args, l1ChainId, l2Chain, l2ChainId: l2Chain.id, ...rest })
     },
     mutationKey: ['writeContract'],
   }

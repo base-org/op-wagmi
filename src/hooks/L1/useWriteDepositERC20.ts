@@ -2,19 +2,19 @@ import { l1StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteDepositERC20Parameters as WriteDepositERC20ActionParameters } from 'op-viem/actions'
 import type { ContractFunctionArgs } from 'viem'
-import { useAccount, useWriteContract } from 'wagmi'
+import { useAccount, useConfig, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validatel1StandardBridgeContract, validateL2Chain } from '../../util/validateChains.js'
 
 const ABI = l1StandardBridgeABI
 const FUNCTION = 'depositERC20To'
 
 export type WriteDepositERC20Parameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -22,10 +22,10 @@ export type WriteDepositERC20Parameters<
   & { args: Omit<Pick<WriteDepositERC20ActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { l2ChainId: number }
 
-export type UseWriteDepositERC20Parameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositERC20Parameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
-export type UseWriteDepositERC20ReturnType<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositERC20ReturnType<config extends Config = Config, context = unknown> =
   & Omit<UseWriteOPActionBaseReturnType<WriteDepositERC20Parameters, config, context>, 'write' | 'writeAsync'>
   & {
     writeDepositERC20: UseWriteOPActionBaseReturnType<WriteDepositERC20Parameters, config, context>['write']
@@ -41,10 +41,10 @@ export type UseWriteDepositERC20ReturnType<config extends Config = OpConfig, con
  * @param parameters - {@link UseWriteDepositERC20Parameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositERC20ReturnType}
  */
-export function useWriteDepositERC20<config extends Config = OpConfig, context = unknown>(
+export function useWriteDepositERC20<config extends Config = Config, context = unknown>(
   args: UseWriteDepositERC20Parameters<config, context> = {},
 ): UseWriteDepositERC20ReturnType<config, context> {
-  const config = useOpConfig(args)
+  const config = useConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
   const account = useAccount(args)
 
@@ -52,16 +52,13 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
     { l2ChainId, args, ...rest },
     options,
   ) => {
-    const l2Chain = config.l2chains[l2ChainId]
-
-    if (!l2Chain) {
-      throw new Error('L2 chain not configured')
-    }
+    const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+    const l1StandardBridge = validatel1StandardBridgeContract(l1ChainId, l2Chain).address
 
     return writeContract(
       {
-        chainId: l2Chain.l1ChainId,
-        address: l2Chain.l1Addresses.l1StandardBridge.address,
+        chainId: l1ChainId,
+        address: l1StandardBridge,
         abi: ABI,
         functionName: FUNCTION,
         args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
@@ -82,15 +79,12 @@ export function useWriteDepositERC20<config extends Config = OpConfig, context =
     { l2ChainId, args, ...rest },
     options,
   ) => {
-    const l2Chain = config.l2chains[l2ChainId]
-
-    if (!l2Chain) {
-      throw new Error('L2 chain not configured')
-    }
+    const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+    const l1StandardBridge = validatel1StandardBridgeContract(l1ChainId, l2Chain).address
 
     return writeContractAsync({
-      chainId: l2Chain.l1ChainId,
-      address: l2Chain.l1Addresses.l1StandardBridge.address,
+      chainId: l1ChainId,
+      address: l1StandardBridge,
       abi: ABI,
       functionName: FUNCTION,
       args: [args.l1Token, args.l2Token, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],

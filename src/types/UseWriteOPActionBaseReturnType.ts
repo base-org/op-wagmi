@@ -3,11 +3,10 @@ import type { WriteContractErrorType, WriteContractReturnType } from '@wagmi/cor
 import type { Abi } from 'viem'
 import type { Config, UseWriteContractReturnType } from 'wagmi'
 import type { WriteContractData, WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from './OpConfig.js'
 
 export type UseWriteOPActionBaseReturnType<
   args,
-  config extends Config = OpConfig,
+  config extends Config = Config,
   context = unknown,
 > =
   & Omit<UseWriteContractReturnType<config, context>, 'writeContract' | 'writeContractAsync'>

@@ -4,18 +4,18 @@ import { optimismPortalABI } from '@eth-optimism/contracts-ts'
 import { useQuery } from '@tanstack/react-query'
 import { getWithdrawalMessages, simulateFinalizeWithdrawalTransaction } from 'op-viem/actions'
 import { type Hash } from 'viem'
-import { type Config, useAccount, usePublicClient } from 'wagmi'
+import { type Config, useAccount, useConfig, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'finalizeWithdrawalTransaction'
 
 export type UseSimulateFinalizeWithdrawalTransactionParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -27,7 +27,7 @@ export type UseSimulateFinalizeWithdrawalTransactionParameters<
   }
 
 export type UseSimulateFinalizeWithdrawalTransactionReturnType<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
@@ -37,7 +37,7 @@ export type UseSimulateFinalizeWithdrawalTransactionReturnType<
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateFinalizeWithdrawalTransactionReturnType}
  */
 export function useSimulateFinalizeWithdrawalTransaction<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, l2ChainId, query: queryOverride, ...rest }: UseSimulateFinalizeWithdrawalTransactionParameters<
@@ -45,17 +45,15 @@ export function useSimulateFinalizeWithdrawalTransaction<
     chainId
   >,
 ): UseSimulateFinalizeWithdrawalTransactionReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
   const account = useAccount(rest)
-  const l1PublicClient = usePublicClient({ chainId: l2Chain.l1ChainId })
-  const l2PublicClient = usePublicClient({ chainId: l2ChainId })
-  const l1Addresses = opConfig.l2chains[l2ChainId].l1Addresses
+  const l1PublicClient = usePublicClient({ chainId: l1ChainId })!
+  const l2PublicClient = usePublicClient({ chainId: l2ChainId })!
+
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const query = {
     async queryFn() {
@@ -66,7 +64,7 @@ export function useSimulateFinalizeWithdrawalTransaction<
       return simulateFinalizeWithdrawalTransaction(l1PublicClient, {
         withdrawal: withdrawalMessages.messages[0],
         account: account.address,
-        ...l1Addresses,
+        portal,
       })
     },
     ...queryOverride,
@@ -81,12 +79,13 @@ export function useSimulateFinalizeWithdrawalTransaction<
         ...args,
       },
       account: account.address,
-      chainId: l2Chain.l1ChainId,
+      chainId: l1ChainId,
       action: 'finalizeWithdrawalTransaction',
     }),
   }
 
-  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true)
+  const enabled = Boolean(account.address) && (queryOverride?.enabled ?? true) && Boolean(l1PublicClient)
+    && Boolean(l2PublicClient)
   return {
     ...useQuery({ ...query, queryKeyHashFn: hashFn, enabled }),
     queryKey: query.queryKey,

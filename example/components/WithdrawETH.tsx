@@ -1,14 +1,10 @@
+import { chainIdToExplorer } from '@/constants/chainIdToExplorer'
 import { useSimulateWithdrawETH, useWriteWithdrawETH } from 'op-wagmi'
 import { useState } from 'react'
 import { Address, parseEther } from 'viem'
 import { Action, ActionToggle } from './ActionToggle'
 import { Button } from './Button'
 import { InputGroup } from './InputGroup'
-
-const chainIdToExplorer: Record<number, string> = {
-  84531: 'https://goerli.basescan.org',
-  420: 'https://goerli-optimism.etherscan.io',
-}
 
 type WithdrawETHProps = {
   selectedChainId: number

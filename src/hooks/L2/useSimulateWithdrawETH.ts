@@ -3,18 +3,18 @@
 import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import type { Config } from '@wagmi/core'
 import { type SimulateWithdrawETHParameters } from 'op-viem/actions'
-import { useAccount, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
-import type { OpConfig } from '../../types/OpConfig.js'
+import { useAccount, useConfig, useSimulateContract, type UseSimulateContractParameters } from 'wagmi'
+
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validateL2StandardBridgeContract } from '../../util/validateChains.js'
 
 const ABI = l2StandardBridgeABI
 const FUNCTION = 'withdrawTo'
 export const OVM_ETH = '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'
 
 export type UseSimulateWithdrawETHParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > =
   & UseSimulateOPActionBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -23,7 +23,7 @@ export type UseSimulateWithdrawETHParameters<
   & { chainId: number }
 
 export type UseSimulateWithdrawETHReturnType<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 > = UseSimulateOPActionBaseReturnType<typeof ABI, typeof FUNCTION, config, chainId>
 
@@ -33,24 +33,22 @@ export type UseSimulateWithdrawETHReturnType<
  * @returns wagmi [useSimulateContract return type](https://alpha.wagmi.sh/react/api/hooks/useSimulateContract#return-type). {@link UseSimulateWithdrawETHReturnType}
  */
 export function useSimulateWithdrawETH<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] | undefined = undefined,
 >(
   { args, chainId, query, ...rest }: UseSimulateWithdrawETHParameters<config, chainId>,
 ): UseSimulateWithdrawETHReturnType<config, chainId> {
-  const opConfig = useOpConfig(rest)
-  const l2Chain = opConfig.l2chains[chainId]
+  const config = useConfig(rest)
   const account = useAccount(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain } = validateL2Chain(config, chainId)
+  const l2StandardBridge = validateL2StandardBridgeContract(l2Chain).address
 
   return useSimulateContract({
-    address: l2Chain.l2Addresses.l2StandardBridge.address,
+    address: l2StandardBridge,
     abi: ABI,
     functionName: FUNCTION,
-    chainId: l2Chain.chainId,
+    chainId: l2Chain.id,
     args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
     value: args.amount,
     query: query as UseSimulateContractParameters['query'],

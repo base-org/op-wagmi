@@ -27,8 +27,10 @@ test('useWriteWithdrawETH', async () => {
   })
 
   await waitFor(() => {
-    expect(result.current.useWriteWithdrawETH.error).toBeNull()
-    expect(result.current.useWriteWithdrawETH.isSuccess).toBeTruthy()
+    return Promise.all([
+      expect(result.current.useWriteWithdrawETH.error).toBeNull(),
+      expect(result.current.useWriteWithdrawETH.isSuccess).toBeTruthy(),
+    ])
   })
 
   expect(result.current.useWriteWithdrawETH).toMatchInlineSnapshot(`

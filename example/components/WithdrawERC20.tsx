@@ -1,3 +1,4 @@
+import { chainIdToExplorer } from '@/constants/chainIdToExplorer'
 import { useSimulateWithdrawERC20, useWriteWithdrawERC20 } from 'op-wagmi'
 import { useState } from 'react'
 import { Address, erc20Abi, isAddress, parseUnits } from 'viem'
@@ -7,11 +8,6 @@ import { Button } from './Button'
 import { InputGroup } from './InputGroup'
 
 const cbETHL2 = '0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2'
-
-const chainIdToExplorer: Record<number, string> = {
-  84531: 'https://goerli.basescan.org',
-  420: 'https://goerli-optimism.etherscan.io',
-}
 
 type WithdrawERC20Props = {
   selectedChainId: number

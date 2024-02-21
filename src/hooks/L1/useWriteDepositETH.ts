@@ -6,17 +6,18 @@ import {
   writeDepositETH,
   type WriteDepositETHParameters as WriteDepositETHActionParameters,
 } from 'op-viem/actions'
-import type { OpConfig } from '../../types/OpConfig.js'
+import type { Chain } from 'viem'
+import { useConfig } from 'wagmi'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
-import { useOpConfig } from '../useOpConfig.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'depositTransaction'
 
 export type WriteDepositETHParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -24,10 +25,10 @@ export type WriteDepositETHParameters<
   & { args: Omit<Pick<WriteDepositETHActionParameters, 'args'>['args'], 'gasLimit'> & { gasLimit?: number } }
   & { l2ChainId: number }
 
-export type UseWriteDepositETHParameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositETHParameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
-export type UseWriteDepositETHReturnType<config extends Config = OpConfig, context = unknown> =
+export type UseWriteDepositETHReturnType<config extends Config = Config, context = unknown> =
   & Omit<UseWriteOPActionBaseReturnType<WriteDepositETHParameters, config, context>, 'write' | 'writeAsync'>
   & {
     writeDepositETH: UseWriteOPActionBaseReturnType<WriteDepositETHParameters, config, context>['write']
@@ -40,16 +41,18 @@ export type UseWriteDepositETHReturnType<config extends Config = OpConfig, conte
 
 type DepositETHMutationParameters = WriteDepositETHParameters & {
   l1ChainId: number
+  l2Chain: Chain
 }
 
 async function writeMutation(
-  config: OpConfig,
-  { l1ChainId, l2ChainId, args, ...rest }: DepositETHMutationParameters,
+  config: Config,
+  { l1ChainId, l2ChainId, l2Chain, args, ...rest }: DepositETHMutationParameters,
 ) {
   const walletClient = await getWalletClient(config, { chainId: l1ChainId })
-  const l1PublicClient = getPublicClient(config, { chainId: l1ChainId })
-  const l2PublicClient = getPublicClient(config, { chainId: l2ChainId })
-  const l1Addresses = config.l2chains[l2ChainId].l1Addresses
+  const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
+  const l2PublicClient = await getPublicClient(config, { chainId: l2ChainId })!
+
+  const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const l2GasLimit = args.gasLimit
     ?? Number(
@@ -64,13 +67,13 @@ async function writeMutation(
   await simulateDepositETH(l1PublicClient, {
     args: { ...args, gasLimit: l2GasLimit },
     account: walletClient.account.address,
-    ...l1Addresses,
+    portal,
     ...rest,
   })
   return writeDepositETH(walletClient, {
     args: { ...args, gasLimit: l2GasLimit },
     account: walletClient.account.address,
-    ...l1Addresses,
+    portal,
     ...rest,
   })
 }
@@ -80,20 +83,22 @@ async function writeMutation(
  * @param parameters - {@link UseWriteDepositETHParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteDepositETHReturnType}
  */
-export function useWriteDepositETH<config extends Config = OpConfig, context = unknown>(
+export function useWriteDepositETH<config extends Config = Config, context = unknown>(
   args: UseWriteDepositETHParameters<config, context> = {},
 ): UseWriteDepositETHReturnType<config, context> {
-  const opConfig = useOpConfig(args)
+  const config = useConfig(args)
 
   const mutation = {
     mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
-      const l2Chain = opConfig.l2chains[l2ChainId]
+      const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
 
-      if (!l2Chain) {
-        throw new Error('L2 chain not configured')
-      }
-
-      return writeMutation(opConfig, { args, l1ChainId: l2Chain.l1ChainId, l2ChainId: l2ChainId, ...rest })
+      return writeMutation(config, {
+        args,
+        l1ChainId,
+        l2ChainId: l2ChainId,
+        l2Chain,
+        ...rest,
+      })
     },
     mutationKey: ['writeContract'],
   }

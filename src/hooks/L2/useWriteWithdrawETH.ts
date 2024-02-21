@@ -2,20 +2,21 @@ import { l2StandardBridgeABI } from '@eth-optimism/contracts-ts'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawETHParameters as WriteWithdrawETHActionParameters } from 'op-viem/actions'
 import type { ContractFunctionArgs } from 'viem'
-import { useAccount, useWriteContract } from 'wagmi'
+import { useAccount, useConfig, useWriteContract } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
-import type { OpConfig } from '../../types/OpConfig.js'
+
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
-import { useOpConfig } from '../useOpConfig.js'
+
+import { validateL2Chain, validateL2StandardBridgeContract } from '../../util/validateChains.js'
 import { OVM_ETH } from './useSimulateWithdrawETH.js'
 
 const ABI = l2StandardBridgeABI
 const FUNCTION = 'withdrawTo'
 
 export type WriteWithdrawETHParameters<
-  config extends Config = OpConfig,
+  config extends Config = Config,
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
@@ -23,7 +24,7 @@ export type WriteWithdrawETHParameters<
   & { args: Omit<Pick<WriteWithdrawETHActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { chainId: number }
 
-export type UseWriteWithdrawETHParameters<config extends Config = OpConfig, context = unknown> =
+export type UseWriteWithdrawETHParameters<config extends Config = Config, context = unknown> =
   UseWriteOPActionBaseParameters<config, context>
 
 export type UseWriteWithdrawETHReturnType<config extends Config = Config, context = unknown> =
@@ -42,10 +43,10 @@ export type UseWriteWithdrawETHReturnType<config extends Config = Config, contex
  * @param parameters - {@link UseWriteWithdrawETHParameters}
  * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteWithdrawETHReturnType}
  */
-export function useWriteWithdrawETH<config extends Config = OpConfig, context = unknown>(
+export function useWriteWithdrawETH<config extends Config = Config, context = unknown>(
   args: UseWriteWithdrawETHParameters<config, context> = {},
 ): UseWriteWithdrawETHReturnType<config, context> {
-  const config = useOpConfig(args)
+  const config = useConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
   const account = useAccount(args)
 
@@ -53,15 +54,12 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
     { chainId, args, ...rest },
     options,
   ) => {
-    const l2Chain = config.l2chains[chainId]
-
-    if (!l2Chain) {
-      throw new Error('L2 chain not configured')
-    }
+    const { l2Chain } = validateL2Chain(config, chainId)
+    const l2StandardBridge = validateL2StandardBridgeContract(l2Chain).address
 
     return writeContract({
-      chainId: l2Chain.chainId,
-      address: l2Chain.l2Addresses.l2StandardBridge.address,
+      chainId: l2Chain.id,
+      address: l2StandardBridge,
       abi: ABI,
       functionName: FUNCTION,
       args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],
@@ -81,15 +79,12 @@ export function useWriteWithdrawETH<config extends Config = OpConfig, context = 
     { chainId, args, ...rest },
     options,
   ) => {
-    const l2Chain = config.l2chains[chainId]
-
-    if (!l2Chain) {
-      throw new Error('L2 chain not configured')
-    }
+    const { l2Chain } = validateL2Chain(config, chainId)
+    const l2StandardBridge = validateL2StandardBridgeContract(l2Chain).address
 
     return writeContractAsync({
-      chainId: l2Chain.chainId,
-      address: l2Chain.l2Addresses.l2StandardBridge.address,
+      chainId: l2Chain.id,
+      address: l2StandardBridge,
       abi: ABI,
       functionName: FUNCTION,
       args: [OVM_ETH, args.to, args.amount, args.minGasLimit ?? 0, args.extraData ?? '0x'],

@@ -33,22 +33,26 @@ export default async function() {
   // We still need to remember to reset the anvil instance between test files. This is generally
   // handled in `setup.ts` but may require additional resetting (e.g. via `afterAll`), in case of
   // any custom per-test adjustments that persist beyond `anvil_reset`.
-  await startProxy({
-    port: 8545,
-    options: {
-      forkUrl,
-      // TODO: Figure out forking / archive node issues
-      // forkBlockNumber,
-      blockTime,
-    },
-  })
-  await startProxy({
-    port: 8546,
-    options: {
-      forkUrl: rollupForkUrl,
-      // TODO: Figure out forking / archive node issues
-      // forkBlockNumber: rollupForkBlockNumber,
-      blockTime: rollupBlockTime,
-    },
-  })
+  await Promise.all([
+    startProxy({
+      port: 8545,
+      options: {
+        forkUrl,
+        // TODO: Figure out forking / archive node issues
+        // forkBlockNumber,
+        blockTime,
+        startTimeout: 30000,
+      },
+    }),
+    startProxy({
+      port: 8546,
+      options: {
+        forkUrl: rollupForkUrl,
+        // TODO: Figure out forking / archive node issues
+        // forkBlockNumber: rollupForkBlockNumber,
+        blockTime: rollupBlockTime,
+        startTimeout: 30000,
+      },
+    }),
+  ])
 }

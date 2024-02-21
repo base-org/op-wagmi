@@ -1,8 +1,6 @@
-import { mock } from '@wagmi/core/internal'
+import { mock } from '@wagmi/connectors'
 import { base as viem_base, mainnet as viem_mainnet } from 'viem/chains'
-import { createConfig, http } from 'wagmi'
-import { base as opWagmiBase } from '../constants/chains/base.js'
-import { type OpConfig } from '../types/OpConfig.js'
+import { type Config, createConfig, http } from 'wagmi'
 import { accounts } from './constants.js'
 import { getRpcUrls } from './utils.js'
 
@@ -28,25 +26,19 @@ const base = {
   // },
 }
 
-export const config: OpConfig = {
-  l2chains: {
-    [opWagmiBase.chainId]: opWagmiBase,
+export const config = createConfig({
+  chains: [mainnet, base],
+  connectors: [mock({ accounts })],
+  pollingInterval: 100,
+  storage: null,
+  transports: {
+    [base.id]: http(),
+    [mainnet.id]: http(),
   },
-
-  ...createConfig({
-    chains: [mainnet, base],
-    connectors: [mock({ accounts })],
-    pollingInterval: 100,
-    storage: null,
-    transports: {
-      [base.id]: http(),
-      [mainnet.id]: http(),
-    },
-  }),
-}
+})
 
 // Hacky way to mock a connected wallet
-export const connectedConfig: OpConfig = {
+export const connectedConfig: Config = {
   ...config,
   state: {
     chainId: 1,

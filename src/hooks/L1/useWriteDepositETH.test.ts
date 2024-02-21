@@ -18,9 +18,10 @@ test('useWriteDepositETH', async () => {
 
   // since we didn't use the async wait for it to succeed
   await waitFor(() => {
-    // check for error first so if one happens we can see it in the test failure
-    expect(result.current.error).toBeNull()
-    expect(result.current.isSuccess).toBeTruthy()
+    return Promise.all([
+      expect(result.current.error).toBeNull(),
+      expect(result.current.isSuccess).toBeTruthy(),
+    ])
   })
 
   // now assert the result is what we expect

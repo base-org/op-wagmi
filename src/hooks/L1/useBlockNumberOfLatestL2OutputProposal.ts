@@ -1,21 +1,19 @@
 import { l2OutputOracleABI } from '@eth-optimism/contracts-ts'
 import type { Abi } from 'viem'
 import { useConfig, useReadContract, type UseReadContractParameters, type UseReadContractReturnType } from 'wagmi'
-import type { OpConfig } from '../../types/OpConfig.js'
+import { validateL2Chain, validateL2OutputOracleContract } from '../../util/validateChains.js'
 
 export function useBlockNumberOfLatestL2OutputProposal(
-  { l2ChainId, config, ...rest }: { l2ChainId: number; config?: OpConfig } & UseReadContractParameters,
+  { l2ChainId, ...rest }: { l2ChainId: number } & UseReadContractParameters,
 ) {
-  const opConfig = useConfig({ config })
-  const l2Chain = opConfig.l2chains[l2ChainId]
+  const config = useConfig(rest)
 
-  if (!l2Chain) {
-    throw new Error('L2 chain not configured')
-  }
+  const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+  const l2OutputOracle = validateL2OutputOracleContract(l1ChainId, l2Chain).address
 
   const result = useReadContract({
     abi: l2OutputOracleABI,
-    address: l2Chain.l1Addresses.l2OutputOracle.address,
+    address: l2OutputOracle,
     functionName: 'latestBlockNumber',
     args: [],
     ...rest,

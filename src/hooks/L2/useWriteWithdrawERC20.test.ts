@@ -28,8 +28,10 @@ test('useWriteWithdrawERC20', async () => {
   })
 
   await waitFor(() => {
-    expect(result.current.useWriteWithdrawERC20.error).toBeNull()
-    expect(result.current.useWriteWithdrawERC20.isSuccess).toBeTruthy()
+    return Promise.all([
+      expect(result.current.useWriteWithdrawERC20.error).toBeNull(),
+      expect(result.current.useWriteWithdrawERC20.isSuccess).toBeTruthy(),
+    ])
   })
 
   expect(result.current.useWriteWithdrawERC20).toMatchInlineSnapshot(`

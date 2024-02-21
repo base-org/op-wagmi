@@ -1,14 +1,10 @@
-import { useState } from 'react'
+import { networkToChainId } from '@/constants/networkToChainId'
+import { useSelectedNetwork } from '@/hooks/useSelectedNetwork'
 import { FinalizeWithdrawalTransaction } from './FinalizeWithdrawalTransaction'
 import { NetworkSelector } from './NetworkSelector'
 
-const networkToChainId: Record<'optimism' | 'base', number> = {
-  base: 84531,
-  optimism: 420,
-}
-
 export function FinalizeContainer() {
-  const [selectedNetwork, setSelectedNetwork] = useState<'optimism' | 'base'>('base')
+  const { selectedNetwork, setSelectedNetwork } = useSelectedNetwork('baseSepolia')
   return (
     <div className='w-full flex flex-col items-center space-y-4'>
       <span className='text-white'>From</span>
