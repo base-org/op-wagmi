@@ -49,7 +49,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@types/use-sync-external-store": "^0.0.6",
     "@viem/anvil": "^0.0.7",
     "@vitest/coverage-v8": "^1.2.2",
     "@wagmi/cli": "^2.1.1",

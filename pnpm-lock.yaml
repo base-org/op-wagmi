@@ -13,7 +13,7 @@ importers:
     dependencies:
       '@eth-optimism/contracts-ts':
         specifier: ^0.15.0
-        version: 0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)(wagmi@2.5.7)
+        version: 0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)
       '@wagmi/core':
         specifier: ^2.x
         version: 2.6.5(@types/react@18.2.38)(react@18.2.0)(typescript@5.0.4)(viem@2.7.11)
@@ -58,8 +58,8 @@ importers:
         specifier: ^18.0.3
         version: 18.2.17
       '@types/use-sync-external-store':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.6
+        version: 0.0.6
       '@viem/anvil':
         specifier: ^0.0.7
         version: 0.0.7
@@ -2318,6 +2318,29 @@ packages:
     requiresBuild: true
     dev: true
 
+  /@eth-optimism/contracts-ts@0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4):
+    resolution: {integrity: sha512-qga3xsj+NhnxjY96TWktKAmc2DSYrdy0E+lVkS3NZ/b5w898IisoMj/Xvv3KoovBJmnk+/ENNnMX7kk+fwQdtA==}
+    peerDependencies:
+      '@wagmi/core': '>1.0.0'
+      wagmi: '>1.0.0'
+    peerDependenciesMeta:
+      '@wagmi/core':
+        optional: true
+      wagmi:
+        optional: true
+    dependencies:
+      '@testing-library/react': 14.1.2(react-dom@18.2.0)(react@18.2.0)
+      '@wagmi/core': 2.6.5(@types/react@18.2.38)(react@18.2.0)(typescript@5.0.4)(viem@2.7.11)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      viem: 1.19.9(typescript@5.0.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@eth-optimism/contracts-ts@0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)(wagmi@2.5.7):
     resolution: {integrity: sha512-qga3xsj+NhnxjY96TWktKAmc2DSYrdy0E+lVkS3NZ/b5w898IisoMj/Xvv3KoovBJmnk+/ENNnMX7kk+fwQdtA==}
     peerDependencies:
@@ -4115,8 +4138,8 @@ packages:
   /@types/trusted-types@2.0.7:
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
-  /@types/use-sync-external-store@0.0.3:
-    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
+  /@types/use-sync-external-store@0.0.6:
+    resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
     dev: true
 
   /@types/web-bluetooth@0.0.20:
