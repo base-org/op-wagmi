@@ -21,7 +21,7 @@ test('useWriteProveWithdrawalTransaction', async () => {
     return Promise.all([
       expect(result.current.error).toBeNull(),
       // We're only checking that we're able to successfully call the contract. The snapshot
-      // will continue to change as blocks get procuded, and this check is sufficient.
+      // will continue to change as blocks get produced, and this check is sufficient.
       expect(result.current.isSuccess).toBeTruthy(),
     ])
   })
