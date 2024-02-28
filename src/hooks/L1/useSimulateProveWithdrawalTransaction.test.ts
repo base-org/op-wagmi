@@ -14,6 +14,6 @@ test('useSimulateProveWithdrawalTransaction', async () => {
   )
 
   // We're only checking that we're able to successfully call the contract. The snapshot
-  // will continue to change as blocks get procuded, and this check is sufficient.
+  // will continue to change as blocks get produced, and this check is sufficient.
   await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 }, { retry: 3 })
