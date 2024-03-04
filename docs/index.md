@@ -57,4 +57,4 @@ return (
 )
 ```
 
-Check out the [example Superchain Bridge](https://github.com/base-org/op-wagmi/tree/master/example) for more.
+Check out the [example Superchain Bridge](/example) for more.

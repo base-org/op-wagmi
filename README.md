@@ -14,7 +14,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/w/base-org/op-wagmi)](https://github.com/base-org/op-wagmi/graphs/contributors)
 [![GitHub Stars](https://img.shields.io/github/stars/base-org/op-wagmi.svg)](https://github.com/base-org/op-wagmi/stargazers)
 ![GitHub repo size](https://img.shields.io/github/repo-size/base-org/op-wagmi)
-[![GitHub](https://img.shields.io/github/license/base-org/op-wagmi?color=blue)](https://github.com/base-org/op-wagmi/blob/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/base-org/op-wagmi?color=blue)](/LICENSE)
 
 <!-- Badge row 2 - links and profiles -->
 
