@@ -13,7 +13,7 @@ importers:
     dependencies:
       '@eth-optimism/contracts-ts':
         specifier: ^0.15.0
-        version: 0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)(wagmi@2.5.7)
+        version: 0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)
       '@wagmi/core':
         specifier: ^2.x
         version: 2.6.5(@types/react@18.2.38)(react@18.2.0)(typescript@5.0.4)(viem@2.7.11)
@@ -55,8 +55,8 @@ importers:
         specifier: ^18.0.9
         version: 18.2.38
       '@types/react-dom':
-        specifier: ^18.0.3
-        version: 18.2.17
+        specifier: ^18.2.21
+        version: 18.2.21
       '@types/use-sync-external-store':
         specifier: ^0.0.3
         version: 0.0.3
@@ -2318,6 +2318,29 @@ packages:
     requiresBuild: true
     dev: true
 
+  /@eth-optimism/contracts-ts@0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4):
+    resolution: {integrity: sha512-qga3xsj+NhnxjY96TWktKAmc2DSYrdy0E+lVkS3NZ/b5w898IisoMj/Xvv3KoovBJmnk+/ENNnMX7kk+fwQdtA==}
+    peerDependencies:
+      '@wagmi/core': '>1.0.0'
+      wagmi: '>1.0.0'
+    peerDependenciesMeta:
+      '@wagmi/core':
+        optional: true
+      wagmi:
+        optional: true
+    dependencies:
+      '@testing-library/react': 14.1.2(react-dom@18.2.0)(react@18.2.0)
+      '@wagmi/core': 2.6.5(@types/react@18.2.38)(react@18.2.0)(typescript@5.0.4)(viem@2.7.11)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      viem: 1.19.9(typescript@5.0.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@eth-optimism/contracts-ts@0.15.0(@wagmi/core@2.6.5)(typescript@5.0.4)(wagmi@2.5.7):
     resolution: {integrity: sha512-qga3xsj+NhnxjY96TWktKAmc2DSYrdy0E+lVkS3NZ/b5w898IisoMj/Xvv3KoovBJmnk+/ENNnMX7kk+fwQdtA==}
     peerDependencies:
@@ -3989,7 +4012,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.4
       '@testing-library/dom': 9.3.3
-      '@types/react-dom': 18.2.17
+      '@types/react-dom': 18.2.21
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
@@ -4087,6 +4110,12 @@ packages:
 
   /@types/react-dom@18.2.17:
     resolution: {integrity: sha512-rvrT/M7Df5eykWFxn6MYt5Pem/Dbyc1N8Y0S9Mrkw2WFCRiqUgw9P7ul2NpwsXCSM1DVdENzdG9J5SreqfAIWg==}
+    dependencies:
+      '@types/react': 18.2.38
+    dev: true
+
+  /@types/react-dom@18.2.21:
+    resolution: {integrity: sha512-gnvBA/21SA4xxqNXEwNiVcP0xSGHh/gi1VhWv9Bl46a0ItbTT5nFY+G9VSQpaG/8N/qdJpJ+vftQ4zflTtnjLw==}
     dependencies:
       '@types/react': 18.2.38
 
